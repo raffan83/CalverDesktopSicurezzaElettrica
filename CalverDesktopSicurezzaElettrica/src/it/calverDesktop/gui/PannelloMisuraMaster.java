@@ -1302,64 +1302,7 @@ private JPanel costruisciPanelAvvio() {
 
 			try {
 
-				if(!SessionBO.tipoRapporto.equals(Costanti.SVT) && !SessionBO.tipoRapporto.equals(Costanti.RDT)&& !SessionBO.tipoRapporto.equals(Costanti.RDP)) 
-				{
-					JOptionPane.showMessageDialog(null, "Il rapporto "+SessionBO.tipoRapporto + " non consente di effettuare prove ", "Errore tipo rapporto", JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
-					return;
-				}
-
-				final ProvaMisuraDTO misura=GestioneMisuraBO.getProvaMisura(""+SessionBO.idStrumento);
 				
-				if(SessionBO.tipoRapporto.equals(Costanti.RDP)) 
-				{
-					SwingUtilities.invokeLater(new Runnable(){
-			            public void run() 
-			            {
-			            	try
-			            	{
-			            	JFrame f=new FrameRapportoProva(misura);
-			            	
-			            	URL iconURL = this.getClass().getResource("/image/logo.png");
-			            	
-			            	
-			            	ImageIcon img = new ImageIcon(iconURL);
-			            	f.setIconImage(img.getImage());
-			      	        
-			            	f.setDefaultCloseOperation(1);
-			      	        f.setVisible(true);
-			      	        
-			      	        }
-			            	catch(Exception ex)
-			      	        {
-							//	GeneralGUI.printException(ex);
-			      	        	ex.printStackTrace();
-			      	        }
-			            }
-
-			        });
-					
-				}else 
-				
-				{
-				
-					if(misura.getListaTabelle().size()>0) 
-				{
-					int mis =GestioneMisuraBO.getStatoMisura(""+SessionBO.idStrumento);
-
-					if(mis==2)
-					{
-						GestioneMisuraBO.cambiaStatoMisura(SessionBO.idStrumento,0);
-					}
-					JPanel panelDB =new PannelloMisuraTabelle();
-
-					SystemGUI.callPanel(panelDB, "PMT");
-
-				}
-					else 
-					{
-						JOptionPane.showMessageDialog(null, "Impossibile avviare una misura senza prove","attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
-					}
-			  }
 			} 
 			catch (Exception e) 
 			{

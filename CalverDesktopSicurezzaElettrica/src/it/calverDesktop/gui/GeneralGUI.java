@@ -26,7 +26,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.io.FilenameUtils;
 
-import it.calverDesktop.bo.GestioneCampioneBO;
 import it.calverDesktop.bo.GestioneDB;
 import it.calverDesktop.bo.GestioneRegistro;
 import it.calverDesktop.bo.SessionBO;
@@ -311,46 +310,6 @@ public  class GeneralGUI extends JFrame implements Serializable{
     			
     		}
     	});
-	    
-	    importazione.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-				JFileChooser jfc = new JFileChooser();
-				
-				javax.swing.filechooser.FileFilter docFilter = new it.calverDesktop.utl.FileTypeFilter(".csv", "CSV - Campioni");
-				jfc.addChoosableFileFilter(docFilter);
-				jfc.showOpenDialog(g);
-				File f= jfc.getSelectedFile();
-				if(f!=null)
-				{
-				String path=f.getPath();
-				
-				try {
-					if(!Costanti.PATH_DB.equals(""))
-					{
-						boolean res=GestioneCampioneBO.importaCampioni(path);
-						
-						if(res)
-						{
-							JOptionPane.showMessageDialog(null, "Importazione completata", "Importazione",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
-						}
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(null, "Devi prima selezionare un file .db","Errore",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
-					}
-				} catch (Exception e) 
-				{
-					PannelloConsole.printException(e);
-				}
-				}
-				g.update(g.getGraphics());	
-			}
-		});
-	    
-	    
-	    
+   
 	}
 }

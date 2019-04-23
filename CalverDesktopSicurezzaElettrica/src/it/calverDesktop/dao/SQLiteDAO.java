@@ -15,13 +15,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 
-import it.calverDesktop.dto.CampioneDTO;
 import it.calverDesktop.dto.ClassificazioneDTO;
-import it.calverDesktop.dto.ConversioneDTO;
 import it.calverDesktop.dto.DatiEsterniDTO;
 import it.calverDesktop.dto.LuogoVerificaDTO;
 import it.calverDesktop.dto.MisuraDTO;
-import it.calverDesktop.dto.ParametroTaraturaDTO;
 import it.calverDesktop.dto.ProvaMisuraDTO;
 import it.calverDesktop.dto.StrumentoDTO;
 import it.calverDesktop.dto.TabellaMisureDTO;
@@ -1249,120 +1246,12 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 
 
-	public static ArrayList<ParametroTaraturaDTO> getListaParametriTaraturaSelezionato(String parametro, String campione) throws Exception {
-		Connection con=null;
-		PreparedStatement pst=null;
-		ResultSet rs =null;
-		ArrayList<ParametroTaraturaDTO> toRet=new  ArrayList<ParametroTaraturaDTO>();
-		ParametroTaraturaDTO parametroTar=null;
-		try
-		{
-			con=getConnection();
-			
-			pst=con.prepareStatement("select * FROM tblCampioni WHERE parametri_taratura=? AND codice=? ORDER BY valore_taratura");
-					
-			pst.setString(1, parametro);
-			pst.setString(2, campione);
-			
-			rs=pst.executeQuery();
-			
-			while(rs.next())
-			{
-				parametroTar= new ParametroTaraturaDTO();
-				parametroTar.setDescrizioneParametro(rs.getString("parametri_taratura"));
-				parametroTar.setDataScadenza(new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("data_scadenza")));
-				parametroTar.setUm(rs.getString("um"));
-				parametroTar.setUm_fond(rs.getString("um_fond"));
-				parametroTar.setIncertezzaAssoluta(rs.getBigDecimal("incertezza_assoluta"));
-				parametroTar.setIncertezzaRelativa(rs.getBigDecimal("incertezza_relativa"));
-				parametroTar.setValore_nominale(rs.getBigDecimal("valore_nominale"));
-				parametroTar.setValoreTaratura(rs.getBigDecimal("valore_taratura"));
-				parametroTar.setInterpolazione(rs.getInt("interpolazione_permessa"));
-				parametroTar.setRisoluzione(rs.getBigDecimal("divisione_unita_misura"));
-				parametroTar.setTipoGrandezza(rs.getString("tipoGrandezza"));
-				toRet.add(parametroTar);			
-				
-			}
-			
-		}catch (Exception e) {
-			throw e;
-		}finally
-		{
-			pst.close();
-			con.close();
-		}
-		return toRet;
-	}
-
-	public static ArrayList<String> getListaParametriTaraturaTotali(String campione) throws Exception {
-		Connection con=null;
-		PreparedStatement pst=null;
-		ResultSet rs =null;
-		ArrayList<String> toRet=new  ArrayList<String>();
-		toRet.add("Seleziona Parametro....");
-		try
-		{
-			con=getConnection();
-			
-			
-			pst=con.prepareStatement("select DISTINCT(parametri_taratura) FROM tblCampioni WHERE codice=?");
-					
-			pst.setString(1, campione);
-			
-			rs=pst.executeQuery();
-			
-			while(rs.next())
-			{
-				toRet.add(rs.getString(1));			
-				
-			}
-			
-		}catch (Exception e) {
-			throw e;
-		}finally
-		{
-			pst.close();
-			con.close();
-		}
-		return toRet;
-	}
-
-
-	public static ArrayList<String> getListaUMConvertibili(String um_fond, String tipoGrandezza) throws Exception {
-		Connection con=null;
-		PreparedStatement pst=null;
-		ResultSet rs =null;
-		ArrayList<String> toRet=new  ArrayList<String>();
-		toRet.add("Seleziona Parametro....");
-		try
-		{
-			con=getConnection();
-			
-			pst=con.prepareStatement("select um_a,um FROM tbl_conversione WHERE um_da=? AND tipo_misura=?");
-					
-			pst.setString(1, um_fond);
-			pst.setString(2, tipoGrandezza);
-			
-			rs=pst.executeQuery();
-			
-			while(rs.next())
-			{
-				toRet.add(rs.getString(1)+" @ "+rs.getString(2));			
-				
-			}
-			
-		}catch (Exception e) {
-			throw e;
-		}finally
-		{
-			pst.close();
-			con.close();
-		}
-		return toRet;
 	
-	}
 
 
+
+
+	
 
 	public static ArrayList<String> getListaFattoriMoltiplicativi() throws Exception {
 		Connection con=null;
@@ -1458,50 +1347,6 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 	}
 
 
-
-	public static ConversioneDTO getFattoreConversione(String um_da,String umCon,String tipoGrandezza) throws Exception {
-		Connection con=null;
-		PreparedStatement pst=null;
-		ResultSet rs =null;
-		ConversioneDTO fattConv=null;
-		try
-		{
-			con=getConnection();
-			
-			pst=con.prepareStatement("select * FROM tbl_conversione WHERE um_da=? AND um_a=?  AND tipo_misura=? ");
-			pst.setString(1, um_da);
-			pst.setString(2, umCon);
-			pst.setString(3, tipoGrandezza);
-		
-			rs=pst.executeQuery();
-			
-			while(rs.next())
-			{
-				fattConv= new ConversioneDTO();
-				if(rs.getString("validita").equals("Tutti"))
-				{
-					fattConv.setValidita(true);
-				}
-				else
-				{
-					fattConv.setValidita(false);
-				}
-				fattConv.setFattoreConversione(rs.getBigDecimal("fattoreConversione"));
-				fattConv.setPotenza(rs.getDouble("potenza"));
-			
-				
-			}
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}finally
-		{
-			pst.close();
-			con.close();
-		}
-		return fattConv;
-	}
 
 
 
@@ -2645,50 +2490,6 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		return listaCampioni;
 	}
 
-
-	public static boolean insertCampioni(ArrayList<CampioneDTO> listaCampioni) throws Exception {
-	
-		Connection con=null;
-		PreparedStatement pst = null;
-		boolean result=false;
-		try 
-		{
-			con=getConnection();
-
-			for (int i=0; i<listaCampioni.size();i++) {
-				CampioneDTO campione =listaCampioni.get(i);
-				pst=con.prepareStatement(insertCMP);
-				pst.setString(1, campione.getId());
-				pst.setString(2, campione.getCodice());
-				pst.setString(3, campione.getMatricola());
-				pst.setString(4, campione.getModello());
-				pst.setString(5, campione.getNum_certificato());
-				pst.setString(6, campione.getData());
-				pst.setString(7, campione.getData_scadenza());
-				pst.setString(8, campione.getFreq_mesi());
-				pst.setString(9, campione.getParam_taratura());
-				pst.setString(10, campione.getUm());
-				pst.setString(11, campione.getUm_fond());
-				pst.setString(12, campione.getValore_taratura());
-				pst.setString(13, campione.getValore_nominale());
-				pst.setString(14, campione.getDiv_um());
-				pst.setString(15, campione.getIncertezzaAssoluta());
-				pst.setString(16, campione.getIncertezzaRelativa());
-				pst.setString(17, campione.getId_tipo_grand());
-				pst.setString(18, campione.getInterpolazione());
-				pst.setString(19, campione.getTipo_grandezza());
-				pst.setString(20, campione.getAbilitato());
-				
-				result=pst.execute();
-				
-			}
-			
-		} catch (Exception e) 
-		{
-			throw e;
-		}
-		return result;
-	}
 
 
 	public static void cambiaStatoMisura(String idStrumento, int stato) throws Exception 

@@ -18,11 +18,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
-
-import it.calverDesktop.bo.GestioneDASM;
 import it.calverDesktop.bo.GestioneRegistro;
-import it.calverDesktop.bo.Serial;
-import it.calverDesktop.dto.DatiDASM_DTO;
 import it.calverDesktop.utl.Costanti;
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -48,14 +44,14 @@ public class PannelloImpostazioni extends JPanel {
 
 	private void costruisciPannello() {
 		
-		DatiDASM_DTO dati =GestioneDASM.getDatiPorta();
+	//	DatiDASM_DTO dati =GestioneDASM.getDatiPorta();
 		
-		if(dati==null)
-		{
-			JOptionPane.showMessageDialog(null, "Controllare la presenza della libreria infoCalver.db in ProgramData","Libreria non trovata",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
-			
-			return;
-		}
+//		if(dati==null)
+//		{
+//			JOptionPane.showMessageDialog(null, "Controllare la presenza della libreria infoCalver.db in ProgramData","Libreria non trovata",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
+//			
+//			return;
+//		}
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setFont(new Font("Arial", Font.BOLD, 14));
 		tabbedPane.setBackground(Color.WHITE);
@@ -102,7 +98,7 @@ public class PannelloImpostazioni extends JPanel {
 				 fieldNomePorta.setFont(new Font("Arial", Font.PLAIN, 14));
 				 fieldNomePorta.setBounds(75, 50, 100, 25);
 				 
-				 fieldNomePorta.setText(dati.getPorta());
+			//	 fieldNomePorta.setText(dati.getPorta());
 				 panelDASM.add(fieldNomePorta, "cell 1 2,width :100:");
 				 
 				 final JLabel frameRate = new JLabel("Frame Rate: ");
@@ -155,7 +151,7 @@ public class PannelloImpostazioni extends JPanel {
 				  		try 
 				  		{
 				  			int frameR= Integer.parseInt(fieldFrameRate.getText());
-				  			GestioneDASM.saveDatiDasm(fieldNomePorta.getText(),frameR);
+				  //			GestioneDASM.saveDatiDasm(fieldNomePorta.getText(),frameR);
 				  			
 				  			JOptionPane.showMessageDialog(null, "Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 				  		}

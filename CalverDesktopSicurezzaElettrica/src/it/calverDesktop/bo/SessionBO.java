@@ -30,7 +30,6 @@ public class SessionBO
 	public static JPanel pannelloCore;
 	public static int widthFrame;
 	public static int heightFrame;
-	public static PortReader portReader;
 	
 	
 }
