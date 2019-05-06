@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+import java.awt.Window.Type;
 
 public class Splash extends SwingWorker<Integer, Integer>
 {
@@ -25,6 +26,8 @@ public class Splash extends SwingWorker<Integer, Integer>
     public Splash(JComponent frm)
     {
     	g= new JFrame();
+    	g.setResizable(false);
+    	g.setType(Type.POPUP);
 		
     	g.setUndecorated(true);
     	

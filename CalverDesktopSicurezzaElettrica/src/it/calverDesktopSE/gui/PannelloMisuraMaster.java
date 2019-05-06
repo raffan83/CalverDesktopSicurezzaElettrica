@@ -290,7 +290,7 @@ public class PannelloMisuraMaster extends JPanel  implements ActionListener
 		JPanel panel_tabella = new JPanel();
 		panel_tabella.setBorder(new TitledBorder(new LineBorder(new Color(215, 23, 29), 2, true), "Tabella Misura", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(215, 23, 29)));
 		panel_tabella.setBackground(Color.WHITE);
-		panel_tabella.setLayout(new MigLayout("", "[grow][][]", "[][grow]"));
+		panel_tabella.setLayout(new MigLayout("", "[grow][][]", "[][][grow]"));
 
 		tabellaSecurTest = new JTable();
 		tabellaSecurTest.setDefaultRenderer(Object.class, new MyCellRenderer());
@@ -357,7 +357,7 @@ public class PannelloMisuraMaster extends JPanel  implements ActionListener
 	
 		
 		JScrollPane scroll = new JScrollPane(tabellaSecurTest);
-		panel_tabella.add(scroll,"cell 0 1 3 1,grow");
+		panel_tabella.add(scroll,"cell 0 2 3 1,grow");
 		
 		
 		
@@ -371,9 +371,11 @@ public class PannelloMisuraMaster extends JPanel  implements ActionListener
 
 	public void riempiModel(SicurezzaElettricaDTO sicurezza) {
 		
-		for (int i = 0; i < model.getRowCount(); i++) {
+		int size=model.getRowCount();
 		
-			model.removeRow(i);
+		for (int i = 0; i < size; i++) {
+		
+			model.removeRow(0);
 		}
 		
 		
