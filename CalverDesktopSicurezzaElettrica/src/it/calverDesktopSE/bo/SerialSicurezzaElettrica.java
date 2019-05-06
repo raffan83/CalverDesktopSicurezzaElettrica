@@ -8,16 +8,14 @@ import jssc.SerialPortList;
 
 public class SerialSicurezzaElettrica {
 
-public static void main(String[] args) {
-    String[] portNames = null;
-    portNames = SerialPortList.getPortNames();
+public static ArrayList<SicurezzaElettricaDTO> listaSicurezzaElettrica(String com,String delay) {
 
-    if (portNames.length == 0) {
-        System.out.println("There are no serial-ports");
-    } else {
-
-        SerialPort serialPort = new SerialPort("COM9");
+        SerialPort serialPort = new SerialPort("COM"+com);
+        
+        ArrayList<SicurezzaElettricaDTO> listaSicurezza= null;
         try {
+        	
+          
             serialPort.openPort();
 
             serialPort.setParams(SerialPort.BAUDRATE_9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
@@ -35,19 +33,23 @@ public static void main(String[] args) {
             byte[] array2 = {0x57, 0x45, 0x52, 0x54, 0x45, 0x3F, 0x24, 0x45,0x41,0x0D};
             serialPort.writeBytes(array2);
 
-            Thread.sleep(3000);
+            
+            Integer i = Integer.parseInt(delay);
+            Thread.sleep(i*1000);
             
             String s  = new String(serialPort.readBytes());
            
-            goTo(s);
+           listaSicurezza=goTo(s);
             
-          //  System.out.println(s);
+           serialPort.closePort();
             
         } catch (Exception e) {
             System.out.println("There are an error on writing string to port т: " + e);
         }
+        
+        return listaSicurezza;
     }
- }
+ 
 
 private static ArrayList<SicurezzaElettricaDTO> goTo(String totalLine) {
 	
@@ -66,32 +68,34 @@ private static ArrayList<SicurezzaElettricaDTO> goTo(String totalLine) {
 			sicurezza = new SicurezzaElettricaDTO();
 			String[] play =data.split(";");
 			
-			sicurezza.setID(play[2]);
-			sicurezza.setSK(play[3]);
-			sicurezza.setDATA(play[4]);
-			sicurezza.setORA(play[5]);
-			sicurezza.setR_SL(play[6]);
-			sicurezza.setR_SL_GW(play[7]);
-			sicurezza.setR_ISO(play[10]);
-			sicurezza.setR_ISO_GW(play[11]);
-			sicurezza.setU_ISO(play[12]);
-			sicurezza.setU_ISO_GW(play[13]);
-			sicurezza.setI_DIFF(play[14]);
-			sicurezza.setI_DIFF_GW(play[15]);
-			sicurezza.setI_EGA(play[19]);
-			sicurezza.setI_EGA_GW(play[20]);
-			sicurezza.setI_EPA(play[21]);
-			sicurezza.setI_EPA_GW(play[22]);
-			sicurezza.setI_GA(play[28]);
-			sicurezza.setI_GA_GW(play[29]);
-			sicurezza.setI_GA_SFC(play[30]);
-			sicurezza.setI_GA_SFC_GW(play[31]);
-			sicurezza.setI_PA_AC(play[32]);
-			sicurezza.setI_PA_AC_GW(play[33]);
-			sicurezza.setI_PA_DC(play[36]);
-			sicurezza.setI_PA_DC_GW(play[37]);
-			sicurezza.setPSPG(play[50]);
-			sicurezza.setUBEZ_GW(play[51]);
+			sicurezza.setID_PROVA(normalizza(play[2]));
+			sicurezza.setSK(normalizza(play[3]));
+			sicurezza.setDATA(normalizza(play[4]));
+			sicurezza.setORA(normalizza(play[5]));
+			sicurezza.setR_SL(normalizza(play[6]));
+			sicurezza.setR_SL_GW(normalizza(play[7]));
+			sicurezza.setR_ISO(normalizza(play[10]));
+			sicurezza.setR_ISO_GW(normalizza(play[11]));
+			sicurezza.setU_ISO(normalizza(play[12]));
+			sicurezza.setU_ISO_GW(normalizza(play[13]));
+			sicurezza.setI_DIFF(normalizza(play[14]));
+			sicurezza.setI_DIFF_GW(normalizza(play[15]));
+			
+			sicurezza.setI_EGA(normalizza(play[20]));
+			sicurezza.setI_EGA_GW(normalizza(play[21]));
+			sicurezza.setI_EPA(normalizza(play[22]));
+			sicurezza.setI_EPA_GW(normalizza(play[23]));
+			
+			sicurezza.setI_GA(normalizza(play[28]));
+			sicurezza.setI_GA_GW(normalizza(play[29]));
+			sicurezza.setI_GA_SFC(normalizza(play[30]));
+			sicurezza.setI_GA_SFC_GW(normalizza(play[31]));
+			sicurezza.setI_PA_AC(normalizza(play[32]));
+			sicurezza.setI_PA_AC_GW(normalizza(play[33]));
+			sicurezza.setI_PA_DC(normalizza(play[36]));
+			sicurezza.setI_PA_DC_GW(normalizza(play[37]));
+			sicurezza.setPSPG(normalizza(play[50]));
+			sicurezza.setUBEZ_GW(normalizza(play[51]));
 			
 			listaSicurezzaElettrica.add(sicurezza);
 			
@@ -101,6 +105,14 @@ private static ArrayList<SicurezzaElettricaDTO> goTo(String totalLine) {
 	System.out.println("***  [FINE LETTURA DATI]  ***");
 	
 	return listaSicurezzaElettrica;
+}
+
+
+private static String normalizza(String string) {
+	
+	string =string.replaceAll("ê", "Ohm");
+	string=string.replaceAll("æ", "µ");
+	return string;
 }
 
 }

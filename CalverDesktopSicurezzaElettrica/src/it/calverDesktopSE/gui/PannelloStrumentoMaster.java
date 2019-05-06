@@ -499,7 +499,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 							SessionBO.idStrumento=id;	
 							idMisura=GestioneMisuraBO.insertMisura(id);
 							SessionBO.idMisura=idMisura;
-							panelDB =new PannelloMisuraMaster(id,new ProvaMisuraDTO(idMisura));
+							panelDB =new PannelloMisuraMaster(id);
 						}
 						else
 						{
@@ -508,9 +508,9 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 							SessionBO.idMisura=idMisura;
 
 
-							ProvaMisuraDTO lista =GestioneMisuraBO.getProvaMisura(id);
+						//	ProvaMisuraDTO lista =GestioneMisuraBO.getProvaMisura(id);
 
-							panelDB =new PannelloMisuraMaster(id,lista);
+							panelDB =new PannelloMisuraMaster(id);
 						}
 						PannelloConsole.printArea("Apertura Scheda Strumento [ID]: "+id);
 						SystemGUI.callPanel(panelDB, "PMM");

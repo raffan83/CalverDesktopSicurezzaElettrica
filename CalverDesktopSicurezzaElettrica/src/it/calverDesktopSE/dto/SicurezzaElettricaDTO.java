@@ -2,7 +2,8 @@ package it.calverDesktopSE.dto;
 
 public class SicurezzaElettricaDTO {
 	
-	private String ID;
+	private int id;
+	private String ID_PROVA;
 	private String DATA;
 	private String ORA;
 	private String SK;
@@ -41,11 +42,18 @@ public class SicurezzaElettricaDTO {
 	private String UBEZ_GW;
 
 	
-	public String getID() {
-		return ID;
+
+	public int getId() {
+		return id;
 	}
-	public void setID(String iD) {
-		ID = iD;
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getID_PROVA() {
+		return ID_PROVA;
+	}
+	public void setID_PROVA(String iD_PROVA) {
+		ID_PROVA = iD_PROVA;
 	}
 	public String getDATA() {
 		return DATA;

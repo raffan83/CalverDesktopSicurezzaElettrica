@@ -39,29 +39,24 @@ import it.calverDesktopSE.dao.SQLiteDAO;
 import it.calverDesktopSE.dto.StrumentoDTO;
 import it.calverDesktopSE.utl.Costanti;
 
+
+
 public class GestioneStampaBO {
 
 	
 	
-	public static int stampaEtichetta(StrumentoDTO strumento, JTextField nCertificatoField, boolean esito,Date dataMisura, boolean fuoriServizio)
+	public static int stampaEtichetta(StrumentoDTO strumento, String data)
 	{
 		
 		String printerType=GestioneRegistro.getStringValue(Costanti.COD_PRINT);
 	try{	
-		String codice= GestioneRegistro.getStringValue(Costanti.COD_OPT)+GestioneRegistro.getStringValue(Costanti.COD_CNT);
+	
 		
-		if(codice==null)
-		{
-			return -1;
-		}
-		
-		PrinterJob pj = PrinterJob.getPrinterJob();
+	  PrinterJob pj = PrinterJob.getPrinterJob();
 		
 		if (pj.printDialog()) {
 		PageFormat pf = pj.defaultPage();
 		Paper paper = pf.getPaper(); 
-		//double width = fromCMToPPI(11);
-		//double height = fromCMToPPI(2);
 		double width = 0;
 		double height = 0; 
 		
@@ -82,7 +77,7 @@ public class GestioneStampaBO {
 		12, 
 		12, 
 		fromCMToPPI(5), 
-		fromCMToPPI(5)); 
+		fromCMToPPI(5)); 		
 		}else {
 			paper.setImageableArea(
 					0, 
@@ -94,19 +89,22 @@ public class GestioneStampaBO {
 
 
 		pf.setOrientation(PageFormat.PORTRAIT);
-		//pf.setOrientation(PageFormat.LANDSCAPE);
+	//	pf.setOrientation(PageFormat.LANDSCAPE);
 		
 		pf.setPaper(paper); 
 	//	System.out.println("After- " + dump(paper));
 	//	System.out.println("After- " + dump(pf)); 
-		dump(pf); 
+	//	dump(pf); 
 		PageFormat validatePage = pj.validatePage(pf);
-	//	System.out.println("Valid- " + dump(validatePage)); 
+	//  System.out.println("Valid- " + dump(validatePage)); 
 		
-		pj.setPrintable(new MyPrintable(strumento,codice,nCertificatoField,esito,dataMisura,fuoriServizio), pf);
+		pj.setPrintable(new MyPrintable(strumento,data), validatePage);
 		
 		pj.print();
-		}} catch 
+		
+		}
+		
+	} catch 
 		
 		(Exception ex) {
 			ex.printStackTrace();
@@ -144,20 +142,12 @@ protected static double fromCMToPPI(double cm) {
 	public static class MyPrintable implements Printable {
 
 		StrumentoDTO strumento;
-		Date dataMisura;
-		String codice;
-		JTextField nCertificatoField;
-		boolean esito;
-		boolean fuoriServizio;
+		String data;
 		
-		public MyPrintable(StrumentoDTO _strumento, String _codice, JTextField _nCertificatoField, boolean _esito, Date _dataMisura,boolean _fuoriServizio)
+		public MyPrintable(StrumentoDTO _strumento,String _data)
 		{
 			strumento=_strumento;
-			codice=_codice;
-			nCertificatoField=_nCertificatoField;
-			esito=_esito;
-			dataMisura=_dataMisura;
-			fuoriServizio=_fuoriServizio;
+			data=_data;
 			
 		}
 		
@@ -174,239 +164,91 @@ protected static double fromCMToPPI(double cm) {
 		if (pageIndex < 1) { 
 		Graphics2D g2d = (Graphics2D) graphics; 
 
-		g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY()); 
+		g2d.translate((int) pageFormat.getImageableY(), (int) pageFormat.getImageableX()); 
 		FontMetrics fm = g2d.getFontMetrics();
-		//int corAscent=fm.getAscent()+5;
 		
+		int x = 120;
 		int corAscent=0;
-		int incrementRow=0;
 		int fontSize=0;
 		
-		if(printerType.equals("1")) {
-		corAscent=113;
-		incrementRow=16;
-		fontSize=15;
-		AffineTransform at = new AffineTransform();
-		at.rotate(-Math.PI/2);
-
-		g2d.setTransform(at);
+		if(printerType.equals("1")) 
+		{
+		corAscent=40;
+		
+		fontSize=18;
+		
 		}else {
 			corAscent=fm.getAscent()+9;
-			incrementRow=6;
 			fontSize=5;
 		}
 		
 		
-		g2d.setFont(new Font("Arial", Font.ITALIC, fontSize)); 
+		g2d.setFont(new Font("Arial", Font.BOLD, fontSize)); 
 		
 		Image img1Header = Toolkit.getDefaultToolkit().getImage(GestioneRegistro.getStringValue(Costanti.COD_IMG_PATH)+"/logo.png");
 		
+		AffineTransform a = AffineTransform.getRotateInstance(Math.PI, 230	, 100);
+		    
+		g2d.setTransform(a);
+		
+		
 		if(printerType.equals("1")) {
-	    g2d.drawImage(img1Header, -200,0,180, 90, null);
-	    g2d.drawString("Codice Interno",-200,corAscent);
-		}else {
+	    g2d.drawImage(img1Header, x-50,0,140, 70, null);
+	    
+	    g2d.drawString("VERIFICA",x+150,corAscent);
+	    g2d.drawString("SICUREZZA ELETTRICA",x+100,corAscent+25);
 		
-			g2d.drawImage(img1Header, 0,0,46, 18, null);
-			g2d.drawString("Codice Interno",0,corAscent);
-		}
-		
-		g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-		corAscent=corAscent+incrementRow;
+	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+	    g2d.drawString("CODICE INTERNO:",x-15,corAscent+70);
+	    
+	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
+	    g2d.drawString(strumento.getCodice_interno(),x+150,corAscent+70);
+	    
+	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+	    g2d.drawString("DATA:",x-15,corAscent+95);
+	    
+	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
+	    g2d.drawString(getData(data),x+45,corAscent+95);
+	    
+	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+	    g2d.drawString("ESITO:",x-15,corAscent+120);
 
+	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));	    
+	    g2d.drawString("IDONEO",x+45,corAscent+120);
 		
-		if(printerType.equals("1")) {
-			g2d.drawString(strumento.getCodice_interno(),-200,corAscent);
-			}else {
-			
-				g2d.drawString(strumento.getCodice_interno(),0,corAscent);
-			}
-		
-	    corAscent=corAscent+incrementRow;
-	//	}
-	//	else
-	//	{
-	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
-		
-			if(printerType.equals("1")) {
-				g2d.drawString("Matricola",-200,corAscent);
-				}else {
-				
-					g2d.drawString("Matricola",-0,corAscent);
-				}
-			
-			
-	//		if(strumento.getMatricola()!=null)
-	//		{
-			g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-			
-				corAscent=corAscent+incrementRow;
-				//g2d.drawString(strumento.getMatricola(),0,corAscent);
-								
-				if(printerType.equals("1")) {
-					g2d.drawString(strumento.getMatricola(),-200,corAscent);
-					}else {
-					
-						g2d.drawString(strumento.getMatricola(),0,corAscent);
-					}			
-		//	}
-	//	}
-	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
-	    corAscent=corAscent+incrementRow;
-	    
-		if(printerType.equals("1")) {
-			g2d.drawString("Data verifica",-200,corAscent);
-			}else {
-			
-				g2d.drawString("Data verifica",0,corAscent);
-			}	
-	 
-	   
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	   // g2d.setFont(new Font("Arial", Font.BOLD, 5));
-	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-	    corAscent=corAscent+incrementRow;    
-	    
-		if(printerType.equals("1")) {
-			g2d.drawString(sdf.format(dataMisura),-200,corAscent);    
-			}else {
-			
-				g2d.drawString(sdf.format(dataMisura),0,corAscent);    
-			}
-	    //g2d.drawString(sdf.format(dataMisura),0,corAscent);
-	    
-	  
-	   if(fuoriServizio==false) 
-	   {
-		   g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
-		    corAscent=corAscent+incrementRow;
-		    
-		if(printerType.equals("1")) {
-			 g2d.drawString("Pross. verifica",-200,corAscent);   
-			}else {
-			
-				 g2d.drawString("Pross. verifica",0,corAscent);   
-			}
-	    
-	    if(esito)
-	    {
-	    	Calendar c = Calendar.getInstance(); 
-			c.setTime(dataMisura); 
-	    	c.add(Calendar.MONTH,strumento.getFreq_taratura());
-		    c.getTime();
-	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-	    corAscent=corAscent+incrementRow;
-	    //g2d.drawString(sdf.format(new java.sql.Date(c.getTime().getTime())),0,corAscent);
-	    
-	    
-		if(printerType.equals("1")) {
-			g2d.drawString(sdf.format(new java.sql.Date(c.getTime().getTime())),-200,corAscent);
-			}else {
-			
-				g2d.drawString(sdf.format(new java.sql.Date(c.getTime().getTime())),0,corAscent);
-			}
-	    
-	    
-	    }else
-	    {
-	    	g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-	  	    corAscent=corAscent+incrementRow;
-	  	    
-			if(printerType.equals("1")) {
-				g2d.drawString("- - ",-200,corAscent);
-				}else {
-				
-					g2d.drawString("- - ",0,corAscent);
-				}
-	  	    
-	  	    
-	  	    
-	    }
-	}else 
-	{
-		 g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
-		 corAscent=corAscent+incrementRow;
-		    
-		if(printerType.equals("1")) {
-			 g2d.drawString("Stato Strumento",-200,corAscent);
-			  corAscent=corAscent+incrementRow;
-			  g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-			  g2d.drawString("FUORI SERVIZIO",-200,corAscent);
-			}else {
-			
-				 g2d.drawString("Stato Strumento",0,corAscent);
-				 corAscent=corAscent+incrementRow;
-				 g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-				  g2d.drawString("FUORI SERVIZIO",0,corAscent);
-			}
-	}
-	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
-	    corAscent=corAscent+incrementRow;
-	    
-	    if(printerType.equals("1")) {
-	    	 g2d.drawString("N° scheda",-200,corAscent);
-			}else {
-			
-				 g2d.drawString("N° scheda",0,corAscent);
-			}
-	    
-	  
-	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-	    corAscent=corAscent+incrementRow;
-	    
-	    if(nCertificatoField.getText().length()>0)
-	    {
-	    	 if(printerType.equals("1")) {
-	    		 g2d.drawString(nCertificatoField.getText(),-200,corAscent);
-				}else {
-				
-					g2d.drawString(nCertificatoField.getText(),0,corAscent);
-				}
-	    	
-	    }
-	    else
-	    {
-	    	String code=strumento.getTipoRapporto()+""+codice;
-	    	g2d.drawString(code,-200,corAscent);
-	    	
-	    	 if(printerType.equals("1")) {
-	    		 g2d.drawString(code,-200,corAscent);
-				}else {
-				
-					g2d.drawString(code,0,corAscent);
-				}
-	    	
-	    	nCertificatoField.setText(code);
-	    	incrementa();
-	    	salvaCertificato(strumento.get__id(),code);
-	    	
-	    }
-	    
-	   if(strumento.getCreato().equals("N"))
-	   {
-	    createQR(strumento);
-	    Image img1 = Toolkit.getDefaultToolkit().getImage(GestioneRegistro.getStringValue(Costanti.COD_IMG_PATH)+"\\qr.png");
-	    //int w11=img1.getWidth(null);
-	    //int h11=img1.getHeight(null);
-	    //g2d.drawImage(img1, -5,corAscent,w11, h11, null);
-	    int w11=0;
-	    int h11=0;
-	    
-	    
-	    
-   	 if(printerType.equals("1")) {
-   		w11=175;
-	    h11=175;
-	    g2d.drawImage(img1, -200,corAscent,w11, h11, null);
 		}
-   	 else {
-		w11=img1.getWidth(null);
-		h11=img1.getHeight(null);
-		g2d.drawImage(img1, -5,corAscent,w11, h11, null);
+		
+		else 
+		
+		{
+			/*
+			 * In attesa di modifica per stampante DYMO
+			 */
+		    g2d.drawImage(img1Header, x-50,0,140, 70, null);
+		    
+		    g2d.drawString("VERIFICA",x+150,corAscent);
+		    g2d.drawString("SICUREZZA ELETTRICA",x+100,corAscent+25);
+			
+		    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+		    g2d.drawString("CODICE INTERNO:",x-15,corAscent+70);
+		    
+		    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
+		    g2d.drawString(strumento.getCodice_interno(),x+150,corAscent+70);
+		    
+		    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+		    g2d.drawString("DATA:",x-15,corAscent+95);
+		    
+		    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
+		    g2d.drawString(getData(data),x+45,corAscent+95);
+		    
+		    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+		    g2d.drawString("ESITO:",x-15,corAscent+120);
+
+		    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));	    
+		    g2d.drawString("IDONEO",x+45,corAscent+120);
 		}
-	
-	    
-	    
-	   }
+		
+
 		result = PAGE_EXISTS;
 		pageIndex=1;
 		}
@@ -416,69 +258,16 @@ protected static double fromCMToPPI(double cm) {
 		return result; 
 		}
 
-		}
-	
-	
-	public static void createQR(StrumentoDTO strumento) throws Exception
-	{
-		byte[] bytesEncoded = Base64.encodeBase64((""+strumento.get__id()).getBytes());
-		System.out.println("encoded value is " + new String(bytesEncoded));
-
- 		String myCodeText = "http://"+Costanti.DEPLOY_HOST+"/dettaglioStrumentoFull.do?id_str="+new String(bytesEncoded);
-		
-		String filePath = GestioneRegistro.getStringValue(Costanti.COD_IMG_PATH)+"\\qr.png";
-		int size = 60;
-		String fileType = "png";
-		File myFile = new File(filePath);
-		try {
+		private String getData(String date) {
+			String dataReturn="";
 			
-			Map<EncodeHintType, Object> hintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
-			hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-			
-			// Now with zxing version 3.2.1 you could change border size (white border size to just 1)
-			hintMap.put(EncodeHintType.MARGIN, 0); /* default = 4 */
-			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
- 
-			QRCodeWriter qrCodeWriter = new QRCodeWriter();
-			BitMatrix byteMatrix = qrCodeWriter.encode(myCodeText, BarcodeFormat.QR_CODE, size,
-					size, hintMap);
-			int CrunchifyWidth = byteMatrix.getWidth();
-			BufferedImage image = new BufferedImage(CrunchifyWidth, CrunchifyWidth,
-					BufferedImage.TYPE_INT_RGB);
-			image.createGraphics();
- 
-			Graphics2D graphics = (Graphics2D) image.getGraphics();
-			graphics.setColor(Color.WHITE);
-			graphics.fillRect(0, 0, CrunchifyWidth, CrunchifyWidth);
-			graphics.setColor(Color.BLACK);
- 
-			for (int i = 0; i < CrunchifyWidth; i++) {
-				for (int j = 0; j < CrunchifyWidth; j++) {
-					if (byteMatrix.get(i, j)) {
-						graphics.fillRect(i, j, 1, 1);
-					}
-				}
+			if(data.length()>6) 
+			{
+				dataReturn="20"+data.substring(0, 2)+"/"+data.substring(3, 5);
 			}
-			ImageIO.write(image, fileType, myFile);
-		} catch (WriterException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			
+			return dataReturn;
 		}
-	}
 
-	public static void incrementa() throws SQLException {
-		
-	 int cnt=Integer.parseInt(GestioneRegistro.getStringValue(Costanti.COD_CNT));
-	 cnt=cnt+1;
-	 GestioneRegistro.setStringValue(Costanti.COD_CNT,""+ cnt);
-	 
-	}
-	
-
-	private static void salvaCertificato(int id, String code) throws SQLException {
-		
-		SQLiteDAO.salvaCertificato(id,code);
-		
-	}
+		}
 }

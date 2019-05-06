@@ -20,6 +20,7 @@ import it.calverDesktopSE.dto.DatiEsterniDTO;
 import it.calverDesktopSE.dto.LuogoVerificaDTO;
 import it.calverDesktopSE.dto.MisuraDTO;
 import it.calverDesktopSE.dto.ProvaMisuraDTO;
+import it.calverDesktopSE.dto.SicurezzaElettricaDTO;
 import it.calverDesktopSE.dto.StrumentoDTO;
 import it.calverDesktopSE.dto.TabellaMisureDTO;
 import it.calverDesktopSE.dto.TipoRapportoDTO;
@@ -1810,7 +1811,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 
 
-	public static void terminaMisura(String idStrumento, BigDecimal temperatura,BigDecimal umidita, int sr, int firma) throws Exception {
+	public static void terminaMisura(String idStrumento, String classe) throws Exception {
 		
 		Connection con=null;
 		PreparedStatement pst=null;
@@ -1819,16 +1820,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			
-			pst=con.prepareStatement("UPDATE  tblMisure SET dataMisura=? ,temperatura=? , umidita=? , statoRicezione=? ,statoMisura=1, tipoFirma=? WHERE id_str=?");
-			SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			Date d = new Date();
-			pst.setString(1,sdf.format(d));
-			
-			pst.setBigDecimal(2, temperatura);
-			pst.setBigDecimal(3, umidita);
-			pst.setInt(4,sr);
-			pst.setInt(5, firma);
-			pst.setInt(6, Integer.parseInt(idStrumento));
+			pst=con.prepareStatement("UPDATE  tblMisuraSicurezzaElettrica SET stato=1, SK=? WHERE id_strumento=?");
+
+			pst.setString(1, classe);
+			pst.setInt(2, Integer.parseInt(idStrumento));
 			
 		
 
@@ -2726,5 +2721,118 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}	
 		
 	}
+	public static SicurezzaElettricaDTO getMisuraElettrica(String idStrumento) throws SQLException {
+		
+		SicurezzaElettricaDTO sicurezza=null;
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs =null;
+		
+		try
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM tblMisuraSicurezzaElettrica WHERE id_strumento=?");
+			pst.setString(1, idStrumento);
+
+			rs=pst.executeQuery();
+			
+			while(rs.next())
+			{
+				sicurezza = new SicurezzaElettricaDTO();
+				sicurezza.setId(rs.getInt("id"));
+				sicurezza.setID_PROVA(rs.getString("ID_PROVA"));
+				sicurezza.setSK(rs.getString("SK"));
+				sicurezza.setDATA(rs.getString("DATA"));
+				sicurezza.setORA(rs.getString("ORA"));
+				sicurezza.setR_SL(rs.getString("R_SL"));
+				sicurezza.setR_SL_GW(rs.getString("R_SL_GW"));
+				sicurezza.setR_ISO(rs.getString("R_ISO"));
+				sicurezza.setR_ISO_GW(rs.getString("R_ISO_GW"));
+				sicurezza.setU_ISO(rs.getString("U_ISO"));
+				sicurezza.setU_ISO_GW(rs.getString("U_ISO_GW"));
+				sicurezza.setI_DIFF(rs.getString("I_DIFF"));
+				sicurezza.setI_DIFF_GW(rs.getString("I_DIFF_GW"));
+				sicurezza.setI_EGA(rs.getString("I_EGA"));
+				sicurezza.setI_EGA_GW(rs.getString("I_EGA_GW"));
+				sicurezza.setI_EPA(rs.getString("I_EPA"));
+				sicurezza.setI_EPA_GW(rs.getString("I_EPA_GW"));
+				sicurezza.setI_GA(rs.getString("I_GA"));
+				sicurezza.setI_GA_GW(rs.getString("I_GA_GW"));
+				sicurezza.setI_GA_SFC(rs.getString("I_GA_SFC"));
+				sicurezza.setI_GA_SFC_GW(rs.getString("I_GA_SFC_GW"));
+				sicurezza.setI_PA_AC(rs.getString("I_PA_AC"));
+				sicurezza.setI_PA_AC_GW(rs.getString("i_PA_AC_GW"));
+				sicurezza.setI_PA_DC(rs.getString("I_PA_DC"));
+				sicurezza.setI_PA_DC_GW(rs.getString("I_PA_DC_GW"));
+				sicurezza.setPSPG(rs.getString("PSPG"));
+				sicurezza.setUBEZ_GW(rs.getString("UBEZ_GW"));
+				
+			}
+			
+		}catch (Exception e) 
+		{
+			e.printStackTrace();
+		}finally 
+		{
+			pst.close();
+			con.close();
+		}
+		
+		return sicurezza;
+	}
+	public static void updateMisuraSicurezzaElettrica(String idStrumento, SicurezzaElettricaDTO sicurezza) throws Exception {
+	
+		Connection con = null;
+		PreparedStatement pst = null;
+		
+		String sql="UPDATE tblMisuraSicurezzaElettrica set R_SL=?,R_SL_GW=?,R_ISO=?,R_ISO_GW=?,U_ISO=?,U_ISO_GW=?,I_DIFF=?,I_DIFF_GW=?,I_EGA=?,I_EGA_GW=?,I_EPA=?,I_EPA_GW=?,"
+														 + "I_GA=?,I_GA_GW=?,I_GA_SFC=?,I_GA_SFC_GW=?,I_PA_AC=?,I_PA_AC_GW=?,I_PA_DC=?,I_PA_DC_GW=?,PSPG=?,UBEZ_GW=?,DATA=?,ORA=?,SK=?,ID_PROVA=?"
+														 + "where ID_STRUMENTO=?";
+		
+		try {
+				con=getConnection();
+				pst=con.prepareStatement(sql);
+		
+				pst.setString(1,sicurezza.getR_SL());
+				pst.setString(2,sicurezza.getR_SL_GW());
+				pst.setString(3,sicurezza.getR_ISO());
+				pst.setString(4,sicurezza.getR_ISO_GW());
+				pst.setString(5,sicurezza.getU_ISO());
+				pst.setString(6,sicurezza.getU_ISO_GW());
+				pst.setString(7,sicurezza.getI_DIFF());
+				pst.setString(8,sicurezza.getI_DIFF_GW());
+				pst.setString(9,sicurezza.getI_EGA());
+				pst.setString(10,sicurezza.getI_EGA_GW());
+				pst.setString(11,sicurezza.getI_EPA());
+				pst.setString(12,sicurezza.getI_EPA_GW());
+				pst.setString(13,sicurezza.getI_GA());
+				pst.setString(14,sicurezza.getI_GA_GW());
+				pst.setString(15,sicurezza.getI_GA_SFC());
+				pst.setString(16,sicurezza.getI_GA_SFC_GW());
+				pst.setString(17,sicurezza.getI_PA_AC());
+				pst.setString(18,sicurezza.getI_PA_AC_GW());
+				pst.setString(19,sicurezza.getI_PA_DC());
+				pst.setString(20,sicurezza.getI_PA_DC_GW());
+				pst.setString(21,sicurezza.getPSPG());
+				pst.setString(22,sicurezza.getUBEZ_GW());
+				pst.setString(23,sicurezza.getDATA());
+				pst.setString(24,sicurezza.getORA());
+				pst.setString(25,sicurezza.getSK());
+				pst.setString(26,sicurezza.getID_PROVA());
+				
+				pst.setString(27, idStrumento);
+				
+				pst.execute();
+				
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally 
+		{
+			pst.close();
+			con.close();
+		}
+		
+	}
+	
 	
 }

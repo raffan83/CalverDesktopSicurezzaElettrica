@@ -11,6 +11,7 @@ import it.calverDesktopSE.dao.SQLiteDAO;
 import it.calverDesktopSE.dto.DatiEsterniDTO;
 import it.calverDesktopSE.dto.MisuraDTO;
 import it.calverDesktopSE.dto.ProvaMisuraDTO;
+import it.calverDesktopSE.dto.SicurezzaElettricaDTO;
 import it.calverDesktopSE.dto.TabellaMisureDTO;
 import it.calverDesktopSE.utl.Utility;
 
@@ -225,10 +226,10 @@ public class GestioneMisuraBO
         return misura;
     }
 
-    public static void terminaMisura(String idStrumento, BigDecimal temperatura, BigDecimal umidita, int sr, int firma)
+    public static void terminaMisura(String idStrumento, String classe)
         throws Exception
     {
-        SQLiteDAO.terminaMisura(idStrumento, temperatura, umidita, sr, firma);
+        SQLiteDAO.terminaMisura(idStrumento, classe);
     }
 
     public static ArrayList getListaPunti(int id, ProvaMisuraDTO misura)
@@ -416,8 +417,17 @@ public class GestioneMisuraBO
 		}
 	}
 
+	public static SicurezzaElettricaDTO getMisuraSicurezza(String idStrumento) throws SQLException {
+		
+		return SQLiteDAO.getMisuraElettrica(idStrumento);
+	}
 
+	public static void updateMisuraSicurezzaElettrica(String idStrumento, SicurezzaElettricaDTO sicurezza) throws Exception {
+		
+		SQLiteDAO.updateMisuraSicurezzaElettrica(idStrumento,sicurezza);
+	}
 
+	
 
 }
 

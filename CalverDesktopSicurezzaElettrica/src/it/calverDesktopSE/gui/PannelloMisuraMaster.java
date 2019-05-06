@@ -1,36 +1,29 @@
 package it.calverDesktopSE.gui;
 
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
-import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
+import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -38,60 +31,44 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-
-import org.apache.commons.io.FilenameUtils;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.block.BlockBorder;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.StandardBarPainter;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.TextTitle;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import it.calverDesktopSE.bo.GestioneMisuraBO;
 import it.calverDesktopSE.bo.GestioneStampaBO;
 import it.calverDesktopSE.bo.GestioneStrumentoBO;
+import it.calverDesktopSE.bo.SerialSicurezzaElettrica;
 import it.calverDesktopSE.bo.SessionBO;
 import it.calverDesktopSE.dao.SQLiteDAO;
 import it.calverDesktopSE.dto.ClassificazioneDTO;
 import it.calverDesktopSE.dto.LuogoVerificaDTO;
-import it.calverDesktopSE.dto.MisuraDTO;
 import it.calverDesktopSE.dto.ProvaMisuraDTO;
+import it.calverDesktopSE.dto.SicurezzaElettricaDTO;
 import it.calverDesktopSE.dto.StrumentoDTO;
-import it.calverDesktopSE.dto.TabellaMisureDTO;
 import it.calverDesktopSE.dto.TipoRapportoDTO;
 import it.calverDesktopSE.dto.TipoStrumentoDTO;
 import it.calverDesktopSE.utl.Costanti;
 import it.calverDesktopSE.utl.Utility;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.JTable;
 
 
-public class PannelloMisuraMaster extends JPanel 
+public class PannelloMisuraMaster extends JPanel  implements ActionListener
 {
 	/**
 	 * 
@@ -120,6 +97,10 @@ public class PannelloMisuraMaster extends JPanel
 	private JTextField address_field;
 	private JTextField reparto_field;
 	private JTextField utilizzatore_field;
+	private JTextField textField_com_port;
+	private JTextField textField_delay;
+	
+	private Splash spl=null;
 
 	JPanel panel_header;
 	JPanel panel_dati_str;
@@ -138,35 +119,38 @@ public class PannelloMisuraMaster extends JPanel
 	JComboBox<TipoStrumentoDTO> comboBox_tipo_strumento;
 	JComboBox<LuogoVerificaDTO> comboBox_luogoVerifica;
 
+	ArrayList<SicurezzaElettricaDTO>listaSicurezza=null;
+	
 	Vector<TipoRapportoDTO> vectorTipoRapporto = null;
 	Vector<ClassificazioneDTO> vectorClassificazione = null;
 	Vector<TipoStrumentoDTO> vectorTipoStrumento = null;
 	Vector<LuogoVerificaDTO> vectorLuogoVerifica = null;
 	private BufferedImage img;
-	private int widthImg;
-	private int heightImg;
 	static JFrame myFrame=null;
+	JTable table_dati_strumento=null;
+	JTable tabellaSecurTest=null;
+	JFrame f;
+	
+	ModelTabella model;
+	private JTextField textField_classe;
+	private JTextField textField_data_ora;
+	private JTextField textField_ID_PROVA;
+	
 
-	public PannelloMisuraMaster(String id,  ProvaMisuraDTO _misura) throws Exception
+	public PannelloMisuraMaster(String id) throws Exception
 	{
 		SessionBO.prevPage="PSS";
 		current=-1;
-		misura=_misura;
 		strumento=GestioneStrumentoBO.getStrumento(SessionBO.idStrumento);
 
 
 		myFrame=SessionBO.generarFrame;
-		URL imageURL = GeneralGUI.class.getResource("/image/creaStr.png");
-		//	setImage(ImageIO.read(imageURL));
+		
 
 		this.setLayout(new MigLayout("","[grow]","[grow]"));
 
 		JPanel masterPanel = new JPanel();
-
-		//masterPanel.setBackground(Color.BLUE);
-
-		//masterPanel.setBorder(new LineBorder(new Color(255, 255, 255), 3, true));
-
+		
 		masterPanel.setLayout(new MigLayout("", "[70%][20%][10%]", "[12%][73%][15%]"));
 
 
@@ -198,21 +182,10 @@ public class PannelloMisuraMaster extends JPanel
 
 	}
 
-
-
-
-
-
-
-	public void setImage(BufferedImage img){
-		this.img = img;
-		widthImg = img.getWidth();
-		heightImg = img.getHeight();
-	}
-
+	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		// System.out.println(myFrame.getHeight()+myFrame.getWidth());
+	
 		this.setBounds(0, 0, myFrame.getWidth()-32, myFrame.getHeight()-272);
 		g.drawImage(img, 5, 5, myFrame.getWidth()-32, myFrame.getHeight()-272,this);
 
@@ -263,7 +236,7 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						try
 						{
-							JFrame f=new JFrame();
+							f=new JFrame();
 							f.setSize(800,400);
 							f.setTitle("Seleziona");
 							Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -317,16 +290,217 @@ public class PannelloMisuraMaster extends JPanel
 		JPanel panel_tabella = new JPanel();
 		panel_tabella.setBorder(new TitledBorder(new LineBorder(new Color(215, 23, 29), 2, true), "Tabella Misura", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(215, 23, 29)));
 		panel_tabella.setBackground(Color.WHITE);
-		panel_tabella.setLayout(new MigLayout("", "[grow]", "[grow]"));
+		panel_tabella.setLayout(new MigLayout("", "[grow][][]", "[][grow]"));
 
-		JTable tabellaSecurTest = new JTable();
+		tabellaSecurTest = new JTable();
+		tabellaSecurTest.setDefaultRenderer(Object.class, new MyCellRenderer());
+		tabellaSecurTest.setFont(new Font("Arial", Font.BOLD, 12));
+		tabellaSecurTest.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+		tabellaSecurTest.setRowHeight(25);
+	
+		
+		model = new ModelTabella();
+		
+		JLabel lblNewLabel_1 = new JLabel("Data Ora Misura");
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 16));
+		panel_tabella.add(lblNewLabel_1, "flowx,cell 1 0");
+		
+		textField_data_ora = new JTextField();
+		textField_data_ora.setHorizontalAlignment(SwingConstants.RIGHT);
+		textField_data_ora.setFont(new Font("Arial", Font.PLAIN, 14));
+		textField_data_ora.setEditable(false);
+		panel_tabella.add(textField_data_ora, "cell 1 0,width :150:");
+		textField_data_ora.setColumns(10);
+		
+		JLabel lblIdProva = new JLabel("ID PROVA");
+		lblIdProva.setFont(new Font("Arial", Font.BOLD, 14));
+		panel_tabella.add(lblIdProva, "flowx,cell 0 0");
+		
+		textField_ID_PROVA = new JTextField();
+		textField_ID_PROVA.setFont(new Font("Arial", Font.PLAIN, 14));
+		textField_ID_PROVA.setEditable(false);
+		panel_tabella.add(textField_ID_PROVA, "cell 0 0,width : 250:");
+		textField_ID_PROVA.setColumns(10);
+		
+		JLabel lblClasse = new JLabel("Classe");
+		lblClasse.setFont(new Font("Arial", Font.BOLD, 16));
+		panel_tabella.add(lblClasse, "flowx,cell 2 0");
+		
+		textField_classe = new JTextField();
+		textField_classe.setFont(new Font("Arial", Font.PLAIN, 14));
+		panel_tabella.add(textField_classe, "cell 2 0,width : 200:");
+		textField_classe.setColumns(10);
+		
+		try 
+		{
+		SicurezzaElettricaDTO sicurezza = GestioneMisuraBO.getMisuraSicurezza(SessionBO.idStrumento);
+		
+		if(sicurezza!=null && sicurezza.getID_PROVA()!=null) 
+		{
+			textField_ID_PROVA.setText(sicurezza.getID_PROVA());
+			textField_classe.setText(sicurezza.getSK());
+			textField_data_ora.setText(sicurezza.getDATA());
+			riempiModel(sicurezza);
+			
+		}
+		
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		tabellaSecurTest.setModel(model);
+		TableColumn column = tabellaSecurTest.getColumnModel().getColumn(tabellaSecurTest.getColumnModel().getColumnIndex("Misurazione"));
+		column.setPreferredWidth(300);
+		
+	
 		
 		JScrollPane scroll = new JScrollPane(tabellaSecurTest);
-		panel_tabella.add("cell 0 0 grow",scroll);
+		panel_tabella.add(scroll,"cell 0 1 3 1,grow");
+		
+		
+		
+	
+		
+	
 		
 		return panel_tabella;
 
 	}
+
+	public void riempiModel(SicurezzaElettricaDTO sicurezza) {
+		
+		for (int i = 0; i < model.getRowCount(); i++) {
+		
+			model.removeRow(i);
+		}
+		
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore Resistenza Conduttore di protezione", 0, 0);
+		model.setValueAt(sicurezza.getR_SL(), 0, 1);
+		model.setValueAt(sicurezza.getR_SL_GW(), 0, 2);
+		model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore Resistenza di isolamento", 1, 0);
+		model.setValueAt(sicurezza.getR_ISO(), 1, 1);
+		model.setValueAt(sicurezza.getR_ISO_GW(), 1, 2);
+		model.setValueAt(returnEsit(sicurezza.getR_ISO(),sicurezza.getR_ISO_GW(),0), 1, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore tensione di verifica Resistenza di isolamento",2, 0);
+		model.setValueAt(sicurezza.getU_ISO(), 2, 1);
+		model.setValueAt(sicurezza.getU_ISO_GW(), 2, 2);
+		model.setValueAt(returnEsit(sicurezza.getU_ISO(),sicurezza.getU_ISO_GW(),1), 2, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente differenziale tra L e N", 3, 0);
+		model.setValueAt(sicurezza.getI_DIFF(), 3, 1);
+		model.setValueAt(sicurezza.getI_DIFF_GW(), 3, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_DIFF(),sicurezza.getI_DIFF_GW(),0), 3, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente dispersione involucro", 4, 0);
+		model.setValueAt(sicurezza.getI_EGA(), 4, 1);
+		model.setValueAt(sicurezza.getI_EGA_GW(), 4, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_EGA(),sicurezza.getI_EGA_GW(),0), 4, 3);
+		
+		
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente dispersione parte applicata", 5, 0);
+		model.setValueAt(sicurezza.getI_EPA(), 5, 1);
+		model.setValueAt(sicurezza.getI_EPA_GW(), 5, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_EPA(),sicurezza.getI_EPA_GW(),0), 5, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (in funzione)", 6, 0);
+		model.setValueAt(sicurezza.getI_GA(), 6, 1);
+		model.setValueAt(sicurezza.getI_GA_GW(), 6, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_GA(),sicurezza.getI_GA_GW(),0), 6, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (rete invertita)", 7, 0);
+		model.setValueAt(sicurezza.getI_GA_SFC(), 7, 1);
+		model.setValueAt(sicurezza.getI_GA_SFC_GW(), 7, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_GA_SFC(),sicurezza.getI_GA_SFC_GW(),0), 7, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente AC dispersione parte applicata (in funzione)", 8, 0);
+		model.setValueAt(sicurezza.getI_PA_AC(), 8, 1);
+		model.setValueAt(sicurezza.getI_PA_AC_GW(), 8, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_PA_AC(),sicurezza.getI_PA_AC_GW(),0), 8, 3);
+		
+		model.addRow(new Object[0]);
+		model.setValueAt("Valore corrente DC dispersione parte applicata (in funzione)", 9, 0);
+		model.setValueAt(sicurezza.getI_PA_DC(), 9, 1);
+		model.setValueAt(sicurezza.getI_PA_DC_GW(), 9, 2);
+		model.setValueAt(returnEsit(sicurezza.getI_PA_DC(),sicurezza.getI_PA_DC_GW(),0), 9, 3);
+		
+	}
+
+
+	private String returnEsit(String r_SL, String r_SL_GW ,int i) {
+	/*
+	 * 0 - confronto limite>valore
+	 * 1 - confronto limite<valore 
+	 */
+		
+		Double valore=null;
+		Double limite = null;
+		if(r_SL!=null && r_SL.length()>0 && r_SL_GW!=null && r_SL_GW.length()>0 ) 
+		{
+			
+			 valore = getNumber(r_SL);
+			 limite = getNumber(r_SL_GW);
+		
+		
+		if(i==0) 
+		{
+			if(r_SL.indexOf("µ")>1) 
+			{
+				valore=valore/1000;
+			}
+			if(valore<=limite) 
+			{
+				return "OK";
+			}else 
+			{
+				return "KO";
+			}
+		}else 
+		{
+			if(valore>limite) 
+			{
+				return "OK";
+			}else 
+			{
+				return "KO";
+			}
+		}
+	 }
+		return "";
+	}
+
+
+	private Double getNumber(String test) {
+	try {
+		Pattern p = Pattern.compile("(-?[0-9]+(?:[,.][0-9]+)?)");
+		Matcher m = p.matcher(test);
+		while (m.find()) {
+		  return Double.parseDouble(m.group());
+		}
+	}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+
 
 	private JPanel costruisciPanelDatiStr(String id, ProvaMisuraDTO misura) {
 		JPanel panel_dati_str= new JPanel();
@@ -729,7 +903,13 @@ public class PannelloMisuraMaster extends JPanel
 				try
 				{
 
-
+					if(textField_data_ora.getText().length()!=0) 
+					{
+						GestioneStampaBO.stampaEtichetta(strumento,textField_data_ora.getText());
+					}else 
+					{
+					JOptionPane.showMessageDialog(null,"Nessuna misura presente","Errore",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
+					}
 				}
 				catch (Exception e) 
 				{
@@ -757,12 +937,19 @@ public class PannelloMisuraMaster extends JPanel
 
 					if(true)
 					{
-						//	BigDecimal temp=new BigDecimal(temperatura);	
-						//	BigDecimal umd=new BigDecimal(umidita);	
-						//	GestioneMisuraBO.terminaMisura(SessionBO.idStrumento,temp,umd,sr,firma);
-						JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+						try 
+						{
+							GestioneMisuraBO.terminaMisura(SessionBO.idStrumento,textField_classe.getText());
+							
+
+							JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 
 
+							
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						
 
 					}else
 					{
@@ -783,8 +970,143 @@ public class PannelloMisuraMaster extends JPanel
 
 	private JPanel costruisciLetturaStrumento() {
 
-		JPanel pannelloMisura = new JPanel();
+		final JPanel pannelloMisura = new JPanel();
+		
+		
+		pannelloMisura.setLayout(new MigLayout("", "[grow][grow][grow][][][]", "[][grow][]"));
+		
+		JLabel lblCom = new JLabel("COM:");
+		lblCom.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloMisura.add(lblCom, "cell 0 0,alignx trailing");
+		
+		textField_com_port = new JTextField();
+		textField_com_port.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloMisura.add(textField_com_port, "cell 1 0, width :50:");
+		textField_com_port.setColumns(10);
+		
+		
+		JLabel lblBuffers = new JLabel("Buffer (sec)");
+		lblBuffers.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloMisura.add(lblBuffers, "cell 2 0,alignx left");
+		
+		textField_delay = new JTextField("3");
+		textField_delay.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloMisura.add(textField_delay, "cell 2 0, width :50:");
+		textField_delay.setColumns(10);
+		
+		JButton btnLeggiDati = new JButton("Leggi Dati");
+		btnLeggiDati.setFont(new Font("Arial", Font.BOLD, 12));
+		btnLeggiDati.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/search_24.png")));
+		pannelloMisura.add(btnLeggiDati, "cell 5 0");
+		
+		
+		MyObjectManager manager = new MyObjectManager();
+		table_dati_strumento = new JTable(new ModelTabellaLetturaDati (manager));
+		
+		table_dati_strumento.setFont(new Font("Arial", Font.PLAIN, 16));
+		table_dati_strumento.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
 
+		TableColumn column = table_dati_strumento.getColumnModel().getColumn(0);
+		column.setCellEditor(new RadioButtonCellEditorRenderer());
+		column.setCellRenderer(new RadioButtonCellEditorRenderer());
+
+		table_dati_strumento.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table_dati_strumento.setDefaultRenderer(Object.class, new MyCellRenderer());
+		table_dati_strumento.setRowHeight(25);
+		
+		table_dati_strumento.getColumnModel().getColumn(0).setPreferredWidth(50);
+		table_dati_strumento.getColumnModel().getColumn(2).setPreferredWidth(50);
+		table_dati_strumento.getColumnModel().getColumn(3).setPreferredWidth(50);
+		
+		JScrollPane scrollPane = new JScrollPane(table_dati_strumento);
+		
+		pannelloMisura.add(scrollPane, "cell 0 1 6 1,grow");
+		
+		JButton btnSeleziona = new JButton("Seleziona");
+		btnSeleziona.setFont(new Font("Arial", Font.BOLD, 12));
+		btnSeleziona.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/continue.png")));
+		pannelloMisura.add(btnSeleziona, "cell 0 2 6 1");
+		
+		
+		
+		
+		btnLeggiDati.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				try
+				{
+					spl =	 new Splash(pannelloMisura);
+					
+					spl.execute();
+					
+
+					Thread thread = new Thread(new ThreadLettura());
+					thread.start();
+					
+				
+				}catch(Exception ex)
+				{
+					ex.printStackTrace();
+					PannelloConsole.printException(ex);
+				}
+				
+			}
+		});
+		
+		btnSeleziona.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				String id="";
+				for (int i = 0; i < table_dati_strumento.getRowCount(); i++) {
+					Boolean chked = Boolean.valueOf(table_dati_strumento.getValueAt(i, 0).toString());
+					String dataCol1 = table_dati_strumento.getValueAt(i, 1).toString();
+					if (chked) {
+						id=dataCol1;
+						break;
+					}
+				}
+				try {		
+					if(!id.equals(""))	
+					{			
+						SicurezzaElettricaDTO sicurezza=null;
+						
+						for (SicurezzaElettricaDTO sicurezzaElettricaDTO : listaSicurezza) {
+						
+							if(sicurezzaElettricaDTO.getID_PROVA().equals(id)) 
+							{
+								sicurezza=sicurezzaElettricaDTO;
+								break;
+							}
+						}
+						
+						GestioneMisuraBO.updateMisuraSicurezzaElettrica(SessionBO.idStrumento,sicurezza);
+						
+						textField_ID_PROVA.setText(sicurezza.getID_PROVA());
+						textField_classe.setText(sicurezza.getSK());
+						textField_data_ora.setText(sicurezza.getDATA()+" - "+sicurezza.getORA());
+						riempiModel(sicurezza);
+						tabellaSecurTest.repaint();
+						
+						f.dispose();
+						
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null,"Selezionare una scheda","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));	
+					}
+				} catch (Exception e1) 
+				{
+					PannelloConsole.printException(e1);
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		
 		return pannelloMisura;
 	}
 
@@ -855,6 +1177,405 @@ public class PannelloMisuraMaster extends JPanel
 				setText( item.getDescrizione() );
 			}
 			return this;
+		}
+	}
+	public class MyCellRenderer extends javax.swing.table.DefaultTableCellRenderer {
+
+
+
+		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+			final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+
+			if (row %2 ==0) 
+			{
+				cellComponent.setBackground(new Color(224,224,224));
+				cellComponent.setForeground(Color.BLACK);
+
+			}else 
+			{
+				cellComponent.setBackground(Color.white);
+				cellComponent.setForeground(Color.BLACK);
+			}
+			return cellComponent;
+
+			
+		}
+		
+		
+
+	}
+	
+	class ModelTabella extends DefaultTableModel {
+
+
+		public ModelTabella() {
+			addColumn("Misurazione");
+			addColumn("Valore Misurato");
+			addColumn("Limite Misura");
+			addColumn("Esito");
+		}
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return String.class;
+			case 1:
+				return String.class;
+			case 2:
+				return String.class;
+			case 3:
+				return String.class;
+			default:
+				return String.class;
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) 
+		{
+				return false;
+		}
+	}
+	
+	class ModelTabellaLetturaDati extends AbstractTableModel implements PropertyChangeListener {
+
+
+		private final MyObjectManager manager;
+
+		public ModelTabellaLetturaDati(MyObjectManager manager) {
+			super();
+			this.manager = manager;
+			manager.propertyChangeSupport.addPropertyChangeListener(this);
+			for (MyObject object : manager.getObjects()) {
+				object.getPropertyChangeSupport().addPropertyChangeListener(this);
+			}
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (evt.getSource() == this.manager) {
+				// OK, not the cleanest thing, just to get the gist of it.
+				if (evt.getPropertyName().equals("objects")) {
+					((MyObject) evt.getNewValue()).getPropertyChangeSupport().addPropertyChangeListener(this);
+				}
+				fireTableDataChanged();
+			} else if (evt.getSource() instanceof MyObject) {
+				int index = this.manager.getObjects().indexOf(evt.getSource());
+				fireTableRowsUpdated(index, index);
+			}
+		}
+
+		@Override
+		public int getColumnCount() {
+			return 4;
+		}
+
+		@Override
+		public int getRowCount() {
+			return this.manager.getObjects().size();
+		}
+
+		public MyObject getValueAt(int row) {
+			return this.manager.getObjects().get(row);
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			switch (columnIndex) {
+			case 0:
+				return getValueAt(rowIndex).isSelected();
+			case 1:
+				return getValueAt(rowIndex).getValue();
+			case 2:
+				return getValueAt(rowIndex).getData();
+			case 3:
+				return getValueAt(rowIndex).getOra();
+			}
+			return null;
+		}
+
+		@Override
+		public void setValueAt(Object value, int rowIndex, int columnIndex) {
+			if (columnIndex == 0) {
+				getValueAt(rowIndex).setSelected(Boolean.TRUE.equals(value));
+			}
+			if (columnIndex == 1) {
+				getValueAt(rowIndex).setSelected(Boolean.TRUE.equals(value));
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return columnIndex == 0;
+		}
+
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return Boolean.class;
+			case 1:
+				return String.class;
+			case 2:
+				return String.class;
+			case 3:
+				return String.class;
+			}
+			return Object.class;
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			switch (column) {
+			case 0:
+				return "Seleziona";
+			case 1:
+				return "Identificativo";
+			case 2:
+				return "Data";
+			case 3:
+				return "Ora";
+
+			}
+			return null;
+		}
+	}
+	
+	private class MyObjectManager {
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private List<MyObject> objects = new ArrayList<MyObject>();
+
+		public void addObject(MyObject object) {
+			objects.add(object);
+			object.setManager(this);
+			propertyChangeSupport.firePropertyChange("objects", null, object);
+		}
+
+		public List<MyObject> getObjects() {
+			return objects;
+		}
+
+		public void setAsSelected(MyObject myObject) {
+			for (MyObject o : objects) {
+				o.setSelected(myObject == o);
+			}
+		}
+	}
+
+	private class MyObject {
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+		private MyObjectManager manager;
+
+		private boolean selected;
+		private String identificativo ;
+		private String data;
+		private String ora;
+		
+
+
+		public MyObject(String _id, String _data,String _ora) {
+			this.identificativo = _id;
+			this.data = _data;
+			this.ora=_ora;
+		
+		}
+
+		public PropertyChangeSupport getPropertyChangeSupport() {
+			return propertyChangeSupport;
+		}
+
+		public String getValue() {
+			return identificativo;
+		}
+
+
+		public MyObjectManager getManager() {
+			return manager;
+		}
+
+		public void setPropertyChangeSupport(PropertyChangeSupport propertyChangeSupport) {
+			this.propertyChangeSupport = propertyChangeSupport;
+		}
+
+		public void setManager(MyObjectManager manager) {
+			this.manager = manager;
+			propertyChangeSupport.firePropertyChange("manager", null, manager);
+		}
+
+		public boolean isSelected() {
+			return selected;
+		}
+
+		public void setSelected(boolean selected) {
+			if (this.selected != selected) {
+				this.selected = selected;
+				if (selected) {
+					manager.setAsSelected(this);
+				}
+				propertyChangeSupport.firePropertyChange("selected", !selected, selected);
+			}
+		}
+
+		public String getIdentificativo() {
+			return identificativo;
+		}
+
+		public void setIdentificativo(String identificativo) {
+			this.identificativo = identificativo;
+		}
+
+		public String getData() {
+			return data;
+		}
+
+		public void setData(String data) {
+			this.data = data;
+		}
+
+		public String getOra() {
+			return ora;
+		}
+
+		public void setOra(String ora) {
+			this.ora = ora;
+		}
+	}
+	public class RadioButtonCellEditorRenderer extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
+
+		private JRadioButton radioButton;
+
+
+
+		public RadioButtonCellEditorRenderer() {
+			this.radioButton = new JRadioButton();
+			radioButton.addActionListener(this);
+
+			 radioButton.setHorizontalAlignment(JRadioButton.CENTER);
+		}
+
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			radioButton.setSelected(Boolean.TRUE.equals(value));
+			Integer stato=null;
+			try {
+				stato=GestioneMisuraBO.getStatoMisura(table.getValueAt(row, 1).toString());  
+				if(stato!=null && stato==0)
+				{
+
+					radioButton.setBackground(new Color(250,210,51));
+				}
+				if(stato!=null && stato==1)
+				{
+
+					radioButton.setBackground(Color.green);
+				}
+				if(stato==null)
+				{
+
+					radioButton.setBackground(Color.white);
+
+				}
+				if(isSelected)
+				{
+					 radioButton.setBackground(table.getSelectionBackground());
+					 radioButton.setForeground(table.getSelectionForeground());
+				}
+
+				radioButton.setAlignmentX(CENTER_ALIGNMENT);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return radioButton;
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			radioButton.setSelected(Boolean.TRUE.equals(value));
+			return radioButton;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			stopCellEditing();
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			return radioButton.isSelected();
+		}
+
+		public void setRadioButton() {
+			//	this.radioButton = radioButton;
+			this.radioButton.setBackground(Color.orange);
+		}
+
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	class ThreadLettura implements Runnable {
+
+		@Override
+		public void run() 
+		{
+			try
+			{
+				String porta=textField_com_port.getText();
+				String delay=textField_delay.getText();
+			   if(porta!=null && porta.length()>0 && delay!=null && delay.length()>0) 
+			   {
+				Integer.parseInt(porta);
+				Integer.parseInt(delay);
+				   
+				listaSicurezza= SerialSicurezzaElettrica.listaSicurezzaElettrica(porta, delay);
+				
+				if(listaSicurezza==null) 
+				{
+					JOptionPane.showMessageDialog(null,"Non sono presenti dati in lettura su questa porta","Nessun dato",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+					   spl.close();
+					return;
+				}
+				MyObjectManager manager = new MyObjectManager();
+				for (int i = 0; i < listaSicurezza.size(); i++) {
+					SicurezzaElettricaDTO sicurezza=listaSicurezza.get(i);
+					MyObject object = new MyObject(""+sicurezza.getID_PROVA(),sicurezza.getDATA(),sicurezza.getORA());
+					manager.addObject(object);
+				}
+				
+
+				table_dati_strumento.setModel(new ModelTabellaLetturaDati (manager));
+
+				
+			table_dati_strumento.repaint();
+
+			validate();
+			repaint();
+			
+			spl.close();
+			   }
+			   else 
+			   {
+				   JOptionPane.showMessageDialog(null,"I campi porta e delay non possono essere vuoti","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				   spl.close();
+			   }
+			}
+			catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null,"I campi porta e delay devono assumere valori numerici","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				spl.close();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				spl.close();
+			}
 		}
 	}
 }
