@@ -381,7 +381,7 @@ public class SQLiteDAO {
 
 		try{
 			con=getConnection();
-			pst=con.prepareStatement("INSERT INTO tblMisuraSicurezzaElettrica(id_strumento,data,stato) VALUES(?,?,?)",pst.RETURN_GENERATED_KEYS);
+			pst=con.prepareStatement("INSERT INTO tblMisuraSicurezzaElettrica(id_strumento,data,stato,cond_prot,involucro,fusibili,connettori,marchiature,altro) VALUES(?,?,?,'OK','OK','OK','OK','OK','OK')",pst.RETURN_GENERATED_KEYS);
 			
 			pst.setInt(1,Integer.parseInt(id));
 			SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -1811,7 +1811,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 
 
-	public static void terminaMisura(String idStrumento, String classe) throws Exception {
+	public static void terminaMisura(String idStrumento, String classe,String partiApplicate) throws Exception {
 		
 		Connection con=null;
 		PreparedStatement pst=null;
@@ -1820,10 +1820,11 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			
-			pst=con.prepareStatement("UPDATE  tblMisuraSicurezzaElettrica SET stato=1, SK=? WHERE id_strumento=?");
+			pst=con.prepareStatement("UPDATE  tblMisuraSicurezzaElettrica SET stato=1, SK=?,PARTI_APPLICATE=? WHERE id_strumento=?");
 
 			pst.setString(1, classe);
-			pst.setInt(2, Integer.parseInt(idStrumento));
+			pst.setString(2, partiApplicate);
+			pst.setInt(3, Integer.parseInt(idStrumento));
 			
 		
 
@@ -2766,7 +2767,13 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				sicurezza.setI_PA_DC_GW(rs.getString("I_PA_DC_GW"));
 				sicurezza.setPSPG(rs.getString("PSPG"));
 				sicurezza.setUBEZ_GW(rs.getString("UBEZ_GW"));
-				
+				sicurezza.setCOND_PROT(rs.getString("COND_PROT"));
+				sicurezza.setINVOLUCRO(rs.getString("INVOLUCRO"));
+				sicurezza.setFUSIBILI(rs.getString("FUSIBILI"));
+				sicurezza.setCONNETTORI(rs.getString("CONNETTORI"));
+				sicurezza.setMARCHIATURE(rs.getString("MARCHIATURE"));
+				sicurezza.setALTRO(rs.getString("ALTRO"));
+				sicurezza.setPARTI_APPLICATE(rs.getString("PARTI_APPLICATE"));
 			}
 			
 		}catch (Exception e) 
@@ -2786,7 +2793,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		PreparedStatement pst = null;
 		
 		String sql="UPDATE tblMisuraSicurezzaElettrica set R_SL=?,R_SL_GW=?,R_ISO=?,R_ISO_GW=?,U_ISO=?,U_ISO_GW=?,I_DIFF=?,I_DIFF_GW=?,I_EGA=?,I_EGA_GW=?,I_EPA=?,I_EPA_GW=?,"
-														 + "I_GA=?,I_GA_GW=?,I_GA_SFC=?,I_GA_SFC_GW=?,I_PA_AC=?,I_PA_AC_GW=?,I_PA_DC=?,I_PA_DC_GW=?,PSPG=?,UBEZ_GW=?,DATA=?,ORA=?,SK=?,ID_PROVA=?"
+														 + "I_GA=?,I_GA_GW=?,I_GA_SFC=?,I_GA_SFC_GW=?,I_PA_AC=?,I_PA_AC_GW=?,I_PA_DC=?,I_PA_DC_GW=?,PSPG=?,UBEZ_GW=?,DATA=?,ORA=?,SK=?,ID_PROVA=?,"
+														 + "COND_PROT=?,INVOLUCRO=?,FUSIBILI=?,CONNETTORI=?,MARCHIATURE=?,ALTRO=?,PARTI_APPLICATE=? "
 														 + "where ID_STRUMENTO=?";
 		
 		try {
@@ -2819,8 +2827,15 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				pst.setString(24,sicurezza.getORA());
 				pst.setString(25,sicurezza.getSK());
 				pst.setString(26,sicurezza.getID_PROVA());
+				pst.setString(27,sicurezza.getCOND_PROT());
+				pst.setString(28,sicurezza.getINVOLUCRO());
+				pst.setString(29,sicurezza.getFUSIBILI());
+				pst.setString(30,sicurezza.getCONNETTORI());
+				pst.setString(31,sicurezza.getMARCHIATURE());
+				pst.setString(32,sicurezza.getALTRO());
+				pst.setString(33,sicurezza.getPARTI_APPLICATE());
 				
-				pst.setString(27, idStrumento);
+				pst.setString(33, idStrumento);
 				
 				pst.execute();
 				

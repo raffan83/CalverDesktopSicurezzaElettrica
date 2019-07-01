@@ -3,6 +3,10 @@ package it.calverDesktopSE.dto;
 public class SicurezzaElettricaDTO {
 	
 	private int id;
+	
+	private int id_misura;
+	private StrumentoDTO strumento;
+	
 	private String ID_PROVA;
 	private String DATA;
 	private String ORA;
@@ -41,8 +45,21 @@ public class SicurezzaElettricaDTO {
 	private String PSPG;
 	private String UBEZ_GW;
 
+	private String COND_PROT;
+	private String INVOLUCRO;
+	private String FUSIBILI;
+	private String CONNETTORI;
+	private String MARCHIATURE;
+	private String ALTRO;
+	private String PARTI_APPLICATE;
 	
-
+	
+	public String getPARTI_APPLICATE() {
+		return PARTI_APPLICATE;
+	}
+	public void setPARTI_APPLICATE(String pARTI_APPLICATE) {
+		PARTI_APPLICATE = pARTI_APPLICATE;
+	}
 	public int getId() {
 		return id;
 	}
@@ -205,6 +222,55 @@ public class SicurezzaElettricaDTO {
 	public void setUBEZ_GW(String uBEZ_GW) {
 		UBEZ_GW = uBEZ_GW;
 	}
+	public int getId_misura() {
+		return id_misura;
+	}
+	public void setId_misura(int id_misura) {
+		this.id_misura = id_misura;
+	}
+	public StrumentoDTO getStrumento() {
+		return strumento;
+	}
+	public void setStrumento(StrumentoDTO strumento) {
+		this.strumento = strumento;
+	}
+	public String getCOND_PROT() {
+		return COND_PROT;
+	}
+	public void setCOND_PROT(String cOND_PROT) {
+		COND_PROT = cOND_PROT;
+	}
+	public String getINVOLUCRO() {
+		return INVOLUCRO;
+	}
+	public void setINVOLUCRO(String iNVOLUCRO) {
+		INVOLUCRO = iNVOLUCRO;
+	}
+	public String getFUSIBILI() {
+		return FUSIBILI;
+	}
+	public void setFUSIBILI(String fUSIBILI) {
+		FUSIBILI = fUSIBILI;
+	}
+	public String getCONNETTORI() {
+		return CONNETTORI;
+	}
+	public void setCONNETTORI(String cONNETTORI) {
+		CONNETTORI = cONNETTORI;
+	}
+	public String getMARCHIATURE() {
+		return MARCHIATURE;
+	}
+	public void setMARCHIATURE(String mARCHIATURE) {
+		MARCHIATURE = mARCHIATURE;
+	}
+	public String getALTRO() {
+		return ALTRO;
+	}
+	public void setALTRO(String aLTRO) {
+		ALTRO = aLTRO;
+	}
+	
 	
 	
 	

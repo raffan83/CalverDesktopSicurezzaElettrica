@@ -226,10 +226,10 @@ public class GestioneMisuraBO
         return misura;
     }
 
-    public static void terminaMisura(String idStrumento, String classe)
+    public static void terminaMisura(String idStrumento, String classe,String partiApplicate)
         throws Exception
     {
-        SQLiteDAO.terminaMisura(idStrumento, classe);
+        SQLiteDAO.terminaMisura(idStrumento, classe,partiApplicate);
     }
 
     public static ArrayList getListaPunti(int id, ProvaMisuraDTO misura)

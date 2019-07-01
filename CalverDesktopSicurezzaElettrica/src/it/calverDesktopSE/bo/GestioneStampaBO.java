@@ -45,7 +45,7 @@ public class GestioneStampaBO {
 
 	
 	
-	public static int stampaEtichetta(StrumentoDTO strumento, String data)
+	public static int stampaEtichetta(StrumentoDTO strumento, String data, String esito)
 	{
 		
 		String printerType=GestioneRegistro.getStringValue(Costanti.COD_PRINT);
@@ -98,7 +98,7 @@ public class GestioneStampaBO {
 		PageFormat validatePage = pj.validatePage(pf);
 	//  System.out.println("Valid- " + dump(validatePage)); 
 		
-		pj.setPrintable(new MyPrintable(strumento,data), validatePage);
+		pj.setPrintable(new MyPrintable(strumento,data,esito), validatePage);
 		
 		pj.print();
 		
@@ -143,11 +143,13 @@ protected static double fromCMToPPI(double cm) {
 
 		StrumentoDTO strumento;
 		String data;
+		String esito;
 		
-		public MyPrintable(StrumentoDTO _strumento,String _data)
+		public MyPrintable(StrumentoDTO _strumento,String _data,String _esito)
 		{
 			strumento=_strumento;
 			data=_data;
+			esito=_esito;
 			
 		}
 		
@@ -214,7 +216,7 @@ protected static double fromCMToPPI(double cm) {
 	    g2d.drawString("ESITO:",x-15,corAscent+120);
 
 	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));	    
-	    g2d.drawString("IDONEO",x+45,corAscent+120);
+	    g2d.drawString(esito,x+45,corAscent+120);
 		
 		}
 		
@@ -261,9 +263,9 @@ protected static double fromCMToPPI(double cm) {
 		private String getData(String date) {
 			String dataReturn="";
 			
-			if(data.length()>6) 
+			if(data.length()>=8) 
 			{
-				dataReturn="20"+data.substring(0, 2)+"/"+data.substring(3, 5);
+				dataReturn="20"+data.substring(6, 8)+"/"+data.substring(3, 5);
 			}
 			
 			return dataReturn;
