@@ -2835,7 +2835,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				pst.setString(32,sicurezza.getALTRO());
 				pst.setString(33,sicurezza.getPARTI_APPLICATE());
 				
-				pst.setString(33, idStrumento);
+				pst.setString(34, idStrumento);
 				
 				pst.execute();
 				

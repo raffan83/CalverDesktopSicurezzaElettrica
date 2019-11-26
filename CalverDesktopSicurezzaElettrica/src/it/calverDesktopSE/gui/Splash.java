@@ -13,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
-import java.awt.Window.Type;
 
 public class Splash extends SwingWorker<Integer, Integer>
 {
@@ -26,8 +25,6 @@ public class Splash extends SwingWorker<Integer, Integer>
     public Splash(JComponent frm)
     {
     	g= new JFrame();
-    	g.setResizable(false);
-    	g.setType(Type.POPUP);
 		
     	g.setUndecorated(true);
     	
@@ -96,19 +93,12 @@ public class Splash extends SwingWorker<Integer, Integer>
 		
 		try 
 		{
-		URL iconURL = this.getClass().getResource("/image/logo.png");
 
-
-		ImageIcon img = new ImageIcon(iconURL);
-		g.setIconImage(img.getImage());
-		
 		g.getContentPane().setLayout(new BorderLayout());
-    	
-    //	g.setTitle("Attendere...");
     	g.setPreferredSize(new Dimension(200, 200));
     	
-    	String imgLocation = "/image/splash.gif";
-		URL imageURL = GeneralGUI.class.getResource(imgLocation);
+    	String imgLocation = "/image/Splash.gif";
+		URL imageURL = InitSplash.class.getResource(imgLocation);
 		
     	lab = new JLabel(new ImageIcon(imageURL));
     	
@@ -118,7 +108,8 @@ public class Splash extends SwingWorker<Integer, Integer>
               Dimension labelSize = g.getPreferredSize();
               g.setLocation(screenSize.width/2 - (labelSize.width/2),
                           screenSize.height/2 - (labelSize.height/2));
-              
+        
+        g.repaint();      
         g.pack();
 		g.setVisible(true);
 		
