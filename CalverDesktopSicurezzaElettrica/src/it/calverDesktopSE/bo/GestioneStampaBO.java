@@ -201,10 +201,16 @@ protected static double fromCMToPPI(double cm) {
 	    g2d.drawString("SICUREZZA ELETTRICA",x+100,corAscent+25);
 		
 	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
-	    g2d.drawString("CODICE INTERNO:",x-15,corAscent+70);
+	    g2d.drawString("CODICE INTERNO:",x-15,corAscent+55);
 	    
 	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
-	    g2d.drawString(strumento.getCodice_interno(),x+150,corAscent+70);
+	    g2d.drawString(strumento.getCodice_interno(),x+150,corAscent+55);
+	    
+	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
+	    g2d.drawString("MATRICOLA:",x-15,corAscent+75);
+	    
+	    g2d.setFont(new Font("Arial", Font.BOLD, fontSize));
+	    g2d.drawString(strumento.getMatricola(),x+100,corAscent+75);
 	    
 	    g2d.setFont(new Font("Arial", Font.ITALIC, fontSize));
 	    g2d.drawString("DATA:",x-15,corAscent+95);
