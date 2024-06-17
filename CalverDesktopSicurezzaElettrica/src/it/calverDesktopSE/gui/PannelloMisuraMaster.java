@@ -14,6 +14,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -148,6 +149,7 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 	private JTextField textField_data_ora;
 	private JTextField textField_ID_PROVA;
 	private JTextField textField_pa;
+	private JTextField textField_altro;
 	
 
 	public PannelloMisuraMaster(String id) throws Exception
@@ -210,7 +212,7 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		
 		pannello.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Condizioni visive", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannello.setBackground(Color.WHITE);
-		pannello.setLayout(new MigLayout("", "[][][grow]", "[grow][35px][35][35][35][35][35][grow]"));
+		pannello.setLayout(new MigLayout("", "[][grow][50px:n][][50:pref:pref,grow]", "[grow][35px][35][35][35][35][35][grow]"));
 		
 		JLabel lblConduzioneDiProtezione = new JLabel("Conduttore di protezione (solo classe I)");
 		lblConduzioneDiProtezione.setFont(new Font("Arial", Font.BOLD, 12));
@@ -224,90 +226,106 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 
 		slider_1.setValue(1);
 		slider_1.setMinorTickSpacing(1);
-		slider_1.setMaximum(1);
+		slider_1.setMaximum(2);
 		
 		  Hashtable<Integer, JLabel> labels = new Hashtable<>();
 		   Font font = new Font("Arial", Font.BOLD, 12);
 		   
 		  JLabel ko= new JLabel("KO");
 		  JLabel ok= new JLabel("OK");
+		  JLabel na= new JLabel("N/A");
 		  
 		  ok.setFont(font);
 		  ko.setFont(font);
+		  na.setFont(font);
 		  
 		  ok.setForeground(Color.GREEN);
 		  ko.setForeground(Color.RED);
-	        labels.put(0, ko);
+		  na.setForeground(Color.ORANGE);
+	       
+		    labels.put(0, ko);
 	        labels.put(1, ok);
+	        labels.put(2, na);
 	  
 	        slider_1.setLabelTable(labels);
 	        
-	        pannello.add(slider_1, "cell 2 1,width : 120:,alignx center");
+	        pannello.add(slider_1, "cell 3 1,width : 120:,alignx center");
 		
 		JLabel lblInvolucroEParti = new JLabel("Involucro e parti meccaniche");
 		lblInvolucroEParti.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblInvolucroEParti, "cell 0 2");
 		
-		 slider_2 = new JSlider();
+		slider_2 = new JSlider();
 		slider_2.setValue(1);
 		slider_2.setPaintTicks(true);
 		slider_2.setPaintLabels(true);
 		slider_2.setMinorTickSpacing(1);
-		slider_2.setMaximum(1);
+		slider_2.setMaximum(2);
 		slider_2.setBackground(Color.WHITE);
-		pannello.add(slider_2, "cell 2 2,width :120:,alignx center");
+		pannello.add(slider_2, "cell 3 2,width :120:,alignx center");
 		
 		JLabel lblPartiIsolanti = new JLabel("Parti isolanti / Fusibili");
 		lblPartiIsolanti.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblPartiIsolanti, "cell 0 3");
 		
-		 slider_3 = new JSlider();
+		slider_3 = new JSlider();
 		slider_3.setValue(1);
 		slider_3.setPaintTicks(true);
 		slider_3.setPaintLabels(true);
 		slider_3.setMinorTickSpacing(1);
-		slider_3.setMaximum(1);
+		slider_3.setMaximum(2);
 		slider_3.setBackground(Color.WHITE);
-		pannello.add(slider_3, "cell 2 3,width : 120:,alignx center");
+		pannello.add(slider_3, "cell 3 3,width : 120:,alignx center");
 		
 		JLabel lblConnettoriEPrese = new JLabel("Connettori e prese");
 		lblConnettoriEPrese.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblConnettoriEPrese, "cell 0 4");
 		
-		 slider_4 = new JSlider();
+		slider_4 = new JSlider();
 		slider_4.setValue(1);
 		slider_4.setPaintTicks(true);
 		slider_4.setPaintLabels(true);
 		slider_4.setMinorTickSpacing(1);
-		slider_4.setMaximum(1);
+		slider_4.setMaximum(2);
 		slider_4.setBackground(Color.WHITE);
-		pannello.add(slider_4, "cell 2 4,width : 120:,alignx center");
+		pannello.add(slider_4, "cell 3 4,width : 120:,alignx center");
 		
 		JLabel lblMarchiature = new JLabel("Marchiature");
 		lblMarchiature.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblMarchiature, "cell 0 5");
 		
-		 slider_5 = new JSlider();
+		slider_5 = new JSlider();
 		slider_5.setValue(1);
 		slider_5.setPaintTicks(true);
 		slider_5.setPaintLabels(true);
 		slider_5.setMinorTickSpacing(1);
-		slider_5.setMaximum(1);
+		slider_5.setMaximum(2);
 		slider_5.setBackground(Color.WHITE);
-		pannello.add(slider_5, "cell 2 5,width : 120:,alignx center");
+		pannello.add(slider_5, "cell 3 5,width : 120:,alignx center");
 		
 		JLabel lblAltro = new JLabel("Altro");
 		lblAltro.setFont(new Font("Arial", Font.BOLD, 12));
-		pannello.add(lblAltro, "cell 0 6");
+		pannello.add(lblAltro, "cell 0 6,alignx left");
+		
+		textField_altro = new JTextField();
+		textField_altro.setFont(new Font("Arial", Font.PLAIN, 12));
+		pannello.add(textField_altro, "cell 1 6,growx");
+		textField_altro.setColumns(10);
 		
 		slider_6 = new JSlider();
 		slider_6.setValue(1);
 		slider_6.setPaintTicks(true);
 		slider_6.setPaintLabels(true);
 		slider_6.setMinorTickSpacing(1);
-		slider_6.setMaximum(1);
+		slider_6.setMaximum(2);
 		slider_6.setBackground(Color.WHITE);
-		pannello.add(slider_6, "cell 2 6,width : 120:,alignx center");
+		pannello.add(slider_6, "cell 3 6,width : 120:,alignx center");
+		
+		JButton btnSalva_1 = new JButton("Salva");
+		
+		btnSalva_1.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/save.png")));
+		btnSalva_1.setFont(new Font("Arial", Font.BOLD, 14));
+		pannello.add(btnSalva_1, "cell 0 7 4 1,alignx center");
 		
 		slider_2.setLabelTable(labels);
 		slider_3.setLabelTable(labels);
@@ -316,6 +334,106 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		slider_6.setLabelTable(labels);
 		
 		slider_1.addChangeListener(this);
+		
+		
+		btnSalva_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				try {
+					SicurezzaElettricaDTO sicurezza = GestioneMisuraBO.getMisuraSicurezza(SessionBO.idStrumento);
+					
+					if(slider_1.getValue()==0) 
+					{
+						sicurezza.setCOND_PROT("KO");
+					}
+					else if(slider_1.getValue()==1) 
+					{
+						sicurezza.setCOND_PROT("OK");
+					}
+					else 
+					{
+						sicurezza.setCOND_PROT("N/A");
+					}
+					
+					if(slider_2.getValue()==0) 
+					{
+						sicurezza.setINVOLUCRO("KO");
+					}
+					else if(slider_2.getValue()==1) 
+					{
+						sicurezza.setINVOLUCRO("OK");
+					}
+					else 
+					{
+						sicurezza.setINVOLUCRO("N/A");
+					}
+					
+					if(slider_3.getValue()==0) 
+					{
+						sicurezza.setFUSIBILI("KO");
+					}
+					else if(slider_3.getValue()==1) 
+					{
+						sicurezza.setFUSIBILI("OK");
+					}
+					else 
+					{
+						sicurezza.setFUSIBILI("N/A");
+					}
+					
+					if(slider_4.getValue()==0) 
+					{
+						sicurezza.setCONNETTORI("KO");
+					}
+					else if(slider_4.getValue()==1) 
+					{
+						sicurezza.setCONNETTORI("OK");
+					}
+					else 
+					{
+						sicurezza.setCONNETTORI("N/A");
+					}
+					
+					if(slider_5.getValue()==0) 
+					{
+						sicurezza.setMARCHIATURE("KO");
+					}
+					else if(slider_5.getValue()==1) 
+					{
+						sicurezza.setMARCHIATURE("OK");
+					}
+					else 
+					{
+						sicurezza.setMARCHIATURE("N/A");
+					}
+					
+					if(slider_6.getValue()==0) 
+					{
+						sicurezza.setALTRO("KO@"+textField_altro.getText());
+					}
+					else if(slider_6.getValue()==1) 
+					{
+						sicurezza.setALTRO("OK@"+textField_altro.getText());
+					}
+					else 
+					{
+						sicurezza.setALTRO("N/A@"+textField_altro.getText());
+					}
+					
+					GestioneMisuraBO.updateMisuraSicurezzaElettrica(SessionBO.idStrumento, sicurezza);
+					JOptionPane.showMessageDialog(null,"Controllo visivo salvato con successo","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));	
+					
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+			}
+		});
+		
+		
+		
 		return pannello;
 	}
 
@@ -607,54 +725,94 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		{
 			slider_1.setValue(1);
 		}
-		else 
+		else if(sicurezza.getCOND_PROT().equals("KO"))
 		{
 			slider_1.setValue(0);
+		}
+		else 
+		{
+			slider_1.setValue(2);
 		}
 		
 		if(sicurezza.getINVOLUCRO().equals("OK"))
 		{
 			slider_2.setValue(1);
 		}
-		else 
+		else if(sicurezza.getINVOLUCRO().equals("KO"))
 		{
 			slider_2.setValue(0);
+		}else 
+		{
+			slider_2.setValue(2);
 		}
 		
 		if(sicurezza.getFUSIBILI().equals("OK"))
 		{
 			slider_3.setValue(1);
 		}
-		else 
+		else if(sicurezza.getFUSIBILI().equals("KO"))
 		{
 			slider_3.setValue(0);
+		}
+		else
+		{
+			slider_3.setValue(2);
 		}
 		
 		if(sicurezza.getCONNETTORI().equals("OK"))
 		{
 			slider_4.setValue(1);
 		}
-		else 
+		else if(sicurezza.getCONNETTORI().equals("KO"))
 		{
 			slider_4.setValue(0);
+		}
+		else 
+		{
+			slider_4.setValue(2);	
 		}
 		
 		if(sicurezza.getMARCHIATURE().equals("OK"))
 		{
 			slider_5.setValue(1);
 		}
-		else 
+		else if(sicurezza.getMARCHIATURE().equals("KO"))
 		{
 			slider_5.setValue(0);
 		}
+		else 
+		{
+			slider_5.setValue(2);
+		}
 		
-		if(sicurezza.getALTRO().equals("OK"))
+		String[] altro=sicurezza.getALTRO().split("@");
+		
+		if(sicurezza.getALTRO().indexOf("OK")>=0)
 		{
 			slider_6.setValue(1);
+		
+			if(altro.length>1) 
+			{
+				textField_altro.setText(altro[1]);
+			}
+		}
+		else if(sicurezza.getALTRO().indexOf("KO")>=0)
+		{
+			slider_6.setValue(0);
+			
+			if(altro.length>1) 
+			{
+				textField_altro.setText(altro[1]);
+			}
 		}
 		else 
 		{
-			slider_6.setValue(0);
+			slider_6.setValue(2);
+			
+			if(altro.length>1) 
+			{
+				textField_altro.setText(altro[1]);
+			}
 		}
 		
 	}

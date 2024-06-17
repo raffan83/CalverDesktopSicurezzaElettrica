@@ -187,7 +187,7 @@ protected static double fromCMToPPI(double cm) {
 		
 		g2d.setFont(new Font("Arial", Font.BOLD, fontSize)); 
 		
-		Image img1Header = Toolkit.getDefaultToolkit().getImage(GestioneRegistro.getStringValue(Costanti.COD_IMG_PATH)+"/logo.png");
+		Image img1Header = Toolkit.getDefaultToolkit().getImage(GestioneRegistro.getStringValue(Costanti.COD_IMG_PATH));
 		
 		AffineTransform a = AffineTransform.getRotateInstance(Math.PI, 230	, 100);
 		    
