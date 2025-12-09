@@ -645,82 +645,203 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 			model.removeRow(0);
 		}
 		
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore Resistenza Conduttore di protezione", 0, 0);
-		model.setValueAt(toString(sicurezza.getR_SL()), 0, 1);
-		model.setValueAt(toString(sicurezza.getR_SL_GW()), 0, 2);
-		model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore Resistenza di isolamento", 1, 0);
-		model.setValueAt(toString(sicurezza.getR_ISO()), 1, 1);
-		model.setValueAt(toString(sicurezza.getR_ISO_GW()), 1, 2);
-		model.setValueAt(returnEsit(sicurezza.getR_ISO(),sicurezza.getR_ISO_GW(),1), 1, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore tensione di verifica Resistenza di isolamento",2, 0);
-		model.setValueAt(toString(sicurezza.getU_ISO()), 2, 1);
-		model.setValueAt(toString(sicurezza.getU_ISO_GW()), 2, 2);
-		model.setValueAt(returnEsit(sicurezza.getU_ISO(),sicurezza.getU_ISO_GW(),1), 2, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente differenziale tra L e N", 3, 0);
-		model.setValueAt(toString(sicurezza.getI_DIFF()), 3, 1);
-		model.setValueAt(toString(sicurezza.getI_DIFF_GW()), 3, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_DIFF(),sicurezza.getI_DIFF_GW(),0), 3, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente dispersione involucro", 4, 0);
-		model.setValueAt(toString(sicurezza.getI_EGA()), 4, 1);
-		model.setValueAt(toString(sicurezza.getI_EGA_GW()), 4, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_EGA(),sicurezza.getI_EGA_GW(),0), 4, 3);
-		
-		
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente dispersione parte applicata", 5, 0);
-		model.setValueAt(toString(sicurezza.getI_EPA()), 5, 1);
-		model.setValueAt(toString(sicurezza.getI_EPA_GW()), 5, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_EPA(),sicurezza.getI_EPA_GW(),0), 5, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (in funzione)", 6, 0);
-		model.setValueAt(toString(sicurezza.getI_GA()), 6, 1);
-		model.setValueAt(toString(sicurezza.getI_GA_GW()), 6, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_GA(),sicurezza.getI_GA_GW(),0), 6, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (rete invertita)", 7, 0);
-		model.setValueAt(toString(sicurezza.getI_GA_SFC()), 7, 1);
-		model.setValueAt(toString(sicurezza.getI_GA_SFC_GW()), 7, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_GA_SFC(),sicurezza.getI_GA_SFC_GW(),0), 7, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente AC dispersione parte applicata (in funzione)", 8, 0);
-		model.setValueAt(toString(sicurezza.getI_PA_AC()), 8, 1);
-		model.setValueAt(toString(sicurezza.getI_PA_AC_GW()), 8, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_PA_AC(),sicurezza.getI_PA_AC_GW(),0), 8, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Valore corrente DC dispersione parte applicata (in funzione)", 9, 0);
-		model.setValueAt(toString(sicurezza.getI_PA_DC()), 9, 1);
-		model.setValueAt(toString(sicurezza.getI_PA_DC_GW()), 9, 2);
-		model.setValueAt(returnEsit(sicurezza.getI_PA_DC(),sicurezza.getI_PA_DC_GW(),0), 9, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Tensione di verifica", 10, 0);
-		model.setValueAt(toString(sicurezza.getPSPG()), 10, 1);
-		model.setValueAt("-", 10, 2);
-		model.setValueAt("-", 10, 3);
-		
-		model.addRow(new Object[0]);
-		model.setValueAt("Tensione nominale", 11, 0);
-		model.setValueAt(toString(sicurezza.getUBEZ_GW()), 11, 1);
-		model.setValueAt("-", 11, 2);
-		model.setValueAt("-", 11, 3);
-		
-		
+			if (sicurezza.getTIPO_NORMA().equals("62535")) {
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore Resistenza Conduttore di protezione", 0, 0);
+			model.setValueAt(toString(sicurezza.getR_SL()), 0, 1);
+			model.setValueAt(toString(sicurezza.getR_SL_GW()), 0, 2);
+			model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore Resistenza di isolamento", 1, 0);
+			model.setValueAt(toString(sicurezza.getR_ISO()), 1, 1);
+			model.setValueAt(toString(sicurezza.getR_ISO_GW()), 1, 2);
+			model.setValueAt(returnEsit(sicurezza.getR_ISO(),sicurezza.getR_ISO_GW(),1), 1, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore tensione di verifica Resistenza di isolamento",2, 0);
+			model.setValueAt(toString(sicurezza.getU_ISO()), 2, 1);
+			model.setValueAt(toString(sicurezza.getU_ISO_GW()), 2, 2);
+			model.setValueAt(returnEsit(sicurezza.getU_ISO(),sicurezza.getU_ISO_GW(),1), 2, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente differenziale tra L e N", 3, 0);
+			model.setValueAt(toString(sicurezza.getI_DIFF()), 3, 1);
+			model.setValueAt(toString(sicurezza.getI_DIFF_GW()), 3, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_DIFF(),sicurezza.getI_DIFF_GW(),0), 3, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente dispersione involucro", 4, 0);
+			model.setValueAt(toString(sicurezza.getI_EGA()), 4, 1);
+			model.setValueAt(toString(sicurezza.getI_EGA_GW()), 4, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_EGA(),sicurezza.getI_EGA_GW(),0), 4, 3);
+			
+			
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente dispersione parte applicata", 5, 0);
+			model.setValueAt(toString(sicurezza.getI_EPA()), 5, 1);
+			model.setValueAt(toString(sicurezza.getI_EPA_GW()), 5, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_EPA(),sicurezza.getI_EPA_GW(),0), 5, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (in funzione)", 6, 0);
+			model.setValueAt(toString(sicurezza.getI_GA()), 6, 1);
+			model.setValueAt(toString(sicurezza.getI_GA_GW()), 6, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_GA(),sicurezza.getI_GA_GW(),0), 6, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (rete invertita)", 7, 0);
+			model.setValueAt(toString(sicurezza.getI_GA_SFC()), 7, 1);
+			model.setValueAt(toString(sicurezza.getI_GA_SFC_GW()), 7, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_GA_SFC(),sicurezza.getI_GA_SFC_GW(),0), 7, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente AC dispersione parte applicata (in funzione)", 8, 0);
+			model.setValueAt(toString(sicurezza.getI_PA_AC()), 8, 1);
+			model.setValueAt(toString(sicurezza.getI_PA_AC_GW()), 8, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_PA_AC(),sicurezza.getI_PA_AC_GW(),0), 8, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Valore corrente DC dispersione parte applicata (in funzione)", 9, 0);
+			model.setValueAt(toString(sicurezza.getI_PA_DC()), 9, 1);
+			model.setValueAt(toString(sicurezza.getI_PA_DC_GW()), 9, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_PA_DC(),sicurezza.getI_PA_DC_GW(),0), 9, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Tensione di verifica", 10, 0);
+			model.setValueAt(toString(sicurezza.getPSPG()), 10, 1);
+			model.setValueAt("-", 10, 2);
+			model.setValueAt("-", 10, 3);
+			
+			model.addRow(new Object[0]);
+			model.setValueAt("Tensione nominale", 11, 0);
+			model.setValueAt(toString(sicurezza.getUBEZ_GW()), 11, 1);
+			model.setValueAt("-", 11, 2);
+			model.setValueAt("-", 11, 3);
+			
+			}
+			else 
+			{
+				model.addRow(new Object[0]);
+				model.setValueAt("Continuità conduttore di protezione ", 0, 0);
+				model.setValueAt(toString(sicurezza.getR_SL()), 0, 1);
+				model.setValueAt(toString(sicurezza.getR_SL_GW()), 0, 2);
+				model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Resistenza di isolamento", 1, 0);
+				model.setValueAt(toString(sicurezza.getR_ISO()), 1, 1);
+				model.setValueAt(toString(sicurezza.getR_ISO_GW()), 1, 2);
+				model.setValueAt(returnEsit(sicurezza.getR_ISO(),sicurezza.getR_ISO_GW(),1), 1, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente differenziale",2, 0);
+				model.setValueAt(toString(sicurezza.getIDIFF()), 2, 1);
+				model.setValueAt(toString(sicurezza.getIDIFF_GW()), 2, 2);
+				model.setValueAt(returnEsit(sicurezza.getIDIFF(),sicurezza.getIDIFF_GW(),1), 2, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente di dispersione verso terra", 3, 0);
+				model.setValueAt(toString(sicurezza.getIEA_NC()), 3, 1);
+				model.setValueAt(toString(sicurezza.getIEA_NC_GW()), 3, 2);
+				model.setValueAt(returnEsit(sicurezza.getIEA_NC(),sicurezza.getIEA_NC_GW(),0), 3, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente di dispersione verso terra (singola cond.di errore)", 4, 0);
+				model.setValueAt(toString(sicurezza.getIEA_SFC()), 4, 1);
+				model.setValueAt(toString(sicurezza.getIEA_SFC_GW()), 4, 2);
+				model.setValueAt(returnEsit(sicurezza.getIEA_SFC(),sicurezza.getIEA_SFC_GW(),0), 4, 3);
+				
+				
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente di dispersione su involucro", 5, 0);
+				model.setValueAt(toString(sicurezza.getIG_NC()), 5, 1);
+				model.setValueAt(toString(sicurezza.getIG_NC_GW()), 5, 2);
+				model.setValueAt(returnEsit(sicurezza.getIG_NC(),sicurezza.getIG_NC_GW(),0), 5, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente di dispersione su involucro (singola cond.di errore)", 6, 0);
+				model.setValueAt(toString(sicurezza.getIG_SFC()), 6, 1);
+				model.setValueAt(toString(sicurezza.getIG_SFC_GW()), 6, 2);
+				model.setValueAt(returnEsit(sicurezza.getIG_SFC(),sicurezza.getIG_SFC_GW(),0), 6, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Dispersione di corrente AC su paziente", 7, 0);
+				model.setValueAt(toString(sicurezza.getIPAAC_NC()), 7, 1);
+				model.setValueAt(toString(sicurezza.getIPAAC_NC_GW()), 7, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPAAC_NC(),sicurezza.getIPAAC_NC_GW(),0), 7, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Dispersione di corrente AC su paziente(cond. guasto sing.) ", 8, 0);
+				model.setValueAt(toString(sicurezza.getIPAAC_SFC()), 8, 1);
+				model.setValueAt(toString(sicurezza.getIPAAC_SFC_GW()), 8, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPAAC_SFC(),sicurezza.getIPAAC_SFC_GW(),0), 8, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente DC su paziente", 9, 0);
+				model.setValueAt(toString(sicurezza.getIPADC_NC()), 9, 1);
+				model.setValueAt(toString(sicurezza.getIPADC_NC_GW()), 9, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPADC_NC(),sicurezza.getIPADC_NC_GW(),0), 9, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente DC su paziente (cond. guasto sing.)", 10, 0);
+				model.setValueAt(toString(sicurezza.getIPADC_SFC()), 10, 1);
+				model.setValueAt(toString(sicurezza.getIPADC_SFC_GW()), 10, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPADC_SFC(),sicurezza.getIPADC_SFC_GW(),0), 10, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente di rete su parti applicate a paziente", 11, 0);
+				model.setValueAt(toString(sicurezza.getIPNAT()), 11, 1);
+				model.setValueAt(toString(sicurezza.getIPNAT_GW()), 11, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPNAT(),sicurezza.getIPNAT_GW(),0), 11, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente ausiliaria AC su paziente", 12, 0);
+				model.setValueAt(toString(sicurezza.getIPHAC_NC()), 12, 1);
+				model.setValueAt(toString(sicurezza.getIPHAC_NC_GW()), 12, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPHAC_NC(),sicurezza.getIPHAC_NC_GW(),0), 12, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente ausiliaria AC su paziente (cond. guasto sing.)", 13, 0);
+				model.setValueAt(toString(sicurezza.getIPHAC_SFC()), 13, 1);
+				model.setValueAt(toString(sicurezza.getIPHAC_SFC_GW()), 13, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPHAC_SFC(),sicurezza.getIPHAC_SFC_GW(),0), 13, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente ausiliaria DC su paziente", 14, 0);
+				model.setValueAt(toString(sicurezza.getIPHDC_NC()), 14, 1);
+				model.setValueAt(toString(sicurezza.getIPHDC_NC_GW()), 14, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPHDC_NC(),sicurezza.getIPHDC_NC_GW(),0), 14, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente ausiliaria DC su paziente (cond. guasto sing.)", 15, 0);
+				model.setValueAt(toString(sicurezza.getIPHDC_SFC()), 15, 1);
+				model.setValueAt(toString(sicurezza.getIPHDC_SFC_GW()), 15, 2);
+				model.setValueAt(returnEsit(sicurezza.getIPHDC_SFC(),sicurezza.getIPHDC_SFC_GW(),0), 15, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Massima potenza assorbita  PMAX [W]", 16, 0);
+				model.setValueAt(toString(sicurezza.getMAX_POWER_INTAKE_601()), 16, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Fattore di potenza LF", 17, 0);
+				model.setValueAt(toString(sicurezza.getPOWER_FACTOR_LF_601()), 17, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Massima corrente di alimentazione  IMAX [A]", 18, 0);
+				model.setValueAt(toString(sicurezza.getMAX_SUPPLY_CUR_601()), 18, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Energia  [kWh]", 19, 0);
+				model.setValueAt(toString(sicurezza.getENERGY_601()), 19, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Durata della misurazione [hh:mm:ss]", 20, 0);
+				model.setValueAt(toString(sicurezza.getDURATION_601()), 20, 1);
+				
+			}
 		if(sicurezza.getCOND_PROT().equals("OK"))
 		{
 			slider_1.setValue(1);
@@ -1714,7 +1835,7 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 
 		@Override
 		public int getColumnCount() {
-			return 4;
+			return 5;
 		}
 
 		@Override
@@ -1737,6 +1858,8 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 				return getValueAt(rowIndex).getData();
 			case 3:
 				return getValueAt(rowIndex).getOra();
+			case 4:
+				return getValueAt(rowIndex).getNorma();
 			}
 			return null;
 		}
@@ -1767,6 +1890,8 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 				return String.class;
 			case 3:
 				return String.class;
+			case 4:
+				return String.class;
 			}
 			return Object.class;
 		}
@@ -1782,6 +1907,8 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 				return "Data";
 			case 3:
 				return "Ora";
+			case 4:
+				return "Norma";
 
 			}
 			return null;
@@ -1818,13 +1945,14 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		private String identificativo ;
 		private String data;
 		private String ora;
-		
+		private String norma;
 
 
-		public MyObject(String _id, String _data,String _ora) {
+		public MyObject(String _id, String _data,String _ora,String norma) {
 			this.identificativo = _id;
 			this.data = _data;
 			this.ora=_ora;
+			this.norma=norma;
 		
 		}
 
@@ -1886,6 +2014,14 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 
 		public void setOra(String ora) {
 			this.ora = ora;
+		}
+		
+		public String getNorma() {
+			return norma;
+		}
+
+		public void setNorma(String norma) {
+			this.norma = norma;
 		}
 	}
 	public class RadioButtonCellEditorRenderer extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
@@ -2000,7 +2136,17 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 				MyObjectManager manager = new MyObjectManager();
 				for (int i = 0; i < listaSicurezza.size(); i++) {
 					SicurezzaElettricaDTO sicurezza=listaSicurezza.get(i);
-					MyObject object = new MyObject(""+sicurezza.getID_PROVA(),sicurezza.getDATA(),sicurezza.getORA());
+					String norma="";
+					
+					if(sicurezza.getTIPO_NORMA().equals("601")) 
+					{
+						norma= "601";
+					}else 
+					{
+						norma="62353";
+					}
+					
+					MyObject object = new MyObject(""+sicurezza.getID_PROVA(),sicurezza.getDATA(),sicurezza.getORA(),norma);
 					manager.addObject(object);
 				}
 				

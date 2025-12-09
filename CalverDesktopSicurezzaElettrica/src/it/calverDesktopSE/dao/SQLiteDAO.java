@@ -2774,6 +2774,42 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				sicurezza.setMARCHIATURE(rs.getString("MARCHIATURE"));
 				sicurezza.setALTRO(rs.getString("ALTRO"));
 				sicurezza.setPARTI_APPLICATE(rs.getString("PARTI_APPLICATE"));
+				sicurezza.setIDIFF(rs.getString("IDIFF"));
+			    sicurezza.setIDIFF_GW(rs.getString("IDIFF_GW"));
+			    sicurezza.setIEA_NC(rs.getString("IEA_NC"));
+			    sicurezza.setIEA_NC_GW(rs.getString("IEA_NC_GW"));
+			    sicurezza.setIEA_SFC(rs.getString("IEA_SFC"));
+			    sicurezza.setIEA_SFC_GW(rs.getString("IEA_SFC_GW"));
+			    sicurezza.setIG_NC(rs.getString("IG_NC"));
+			    sicurezza.setIG_NC_GW(rs.getString("IG_NC_GW"));
+			    sicurezza.setIG_SFC(rs.getString("IG_SFC"));
+			    sicurezza.setIG_SFC_GW(rs.getString("IG_SFC_GW"));
+			    sicurezza.setIPAAC_NC(rs.getString("IPAAC_NC"));
+			    sicurezza.setIPAAC_NC_GW(rs.getString("IPAAC_NC_GW"));
+			    sicurezza.setIPAAC_SFC(rs.getString("IPAAC_SFC"));
+			    sicurezza.setIPAAC_SFC_GW(rs.getString("IPAAC_SFC_GW"));
+			    sicurezza.setIPADC_NC(rs.getString("IPADC_NC"));
+			    sicurezza.setIPADC_NC_GW(rs.getString("IPADC_NC_GW"));
+			    sicurezza.setIPADC_SFC(rs.getString("IPADC_SFC"));
+			    sicurezza.setIPADC_SFC_GW(rs.getString("IPADC_SFC_GW"));
+			    sicurezza.setIPNAT(rs.getString("IPNAT"));
+			    sicurezza.setIPNAT_GW(rs.getString("IPNAT_GW"));
+			    sicurezza.setIPHAC_NC(rs.getString("IPHAC_NC"));
+			    sicurezza.setIPHAC_NC_GW(rs.getString("IPHAC_NC_GW"));
+			    sicurezza.setIPHAC_SFC(rs.getString("IPHAC_SFC"));
+			    sicurezza.setIPHAC_SFC_GW(rs.getString("IPHAC_SFC_GW"));
+			    sicurezza.setIPHDC_NC(rs.getString("IPHDC_NC"));
+			    sicurezza.setIPHDC_NC_GW(rs.getString("IPHDC_NC_GW"));
+			    sicurezza.setIPHDC_SFC(rs.getString("IPHDC_SFC"));
+			    sicurezza.setIPHDC_SFC_GW(rs.getString("IPHDC_SFC_GW"));
+			    sicurezza.setMAX_POWER_INTAKE_601(rs.getString("MAX_POWER_INTAKE_601"));
+			    sicurezza.setPOWER_FACTOR_LF_601(rs.getString("POWER_FACTOR_LF_601"));
+			    sicurezza.setMAX_SUPPLY_CUR_601(rs.getString("MAX_SUPPLY_CUR_601"));
+			    sicurezza.setENERGY_601(rs.getString("ENERGY_601"));
+			    sicurezza.setDURATION_601(rs.getString("DURATION_601"));
+			    
+			    
+			    sicurezza.setTIPO_NORMA(rs.getString("TIPO_NORMA"));
 			}
 			
 		}catch (Exception e) 
@@ -2794,8 +2830,12 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 		String sql="UPDATE tblMisuraSicurezzaElettrica set R_SL=?,R_SL_GW=?,R_ISO=?,R_ISO_GW=?,U_ISO=?,U_ISO_GW=?,I_DIFF=?,I_DIFF_GW=?,I_EGA=?,I_EGA_GW=?,I_EPA=?,I_EPA_GW=?,"
 														 + "I_GA=?,I_GA_GW=?,I_GA_SFC=?,I_GA_SFC_GW=?,I_PA_AC=?,I_PA_AC_GW=?,I_PA_DC=?,I_PA_DC_GW=?,PSPG=?,UBEZ_GW=?,DATA=?,ORA=?,SK=?,ID_PROVA=?,"
-														 + "COND_PROT=?,INVOLUCRO=?,FUSIBILI=?,CONNETTORI=?,MARCHIATURE=?,ALTRO=?,PARTI_APPLICATE=? "
-														 + "where ID_STRUMENTO=?";
+														 + "COND_PROT=?,INVOLUCRO=?,FUSIBILI=?,CONNETTORI=?,MARCHIATURE=?,ALTRO=?,PARTI_APPLICATE=? ,  IDIFF=?,IDIFF_GW=?,IEA_NC=?,IEA_NC_GW=?,IEA_SFC=?, "
+														 + "IEA_SFC_GW=?,IG_NC=?,IG_NC_GW=?,IG_SFC=?,IG_SFC_GW=?,IPAAC_NC=?,IPAAC_NC_GW=?,IPAAC_SFC=?,IPAAC_SFC_GW=?,IPADC_NC=?,"
+														 + "IPADC_NC_GW=?,IPADC_SFC=?,IPADC_SFC_GW=?,IPNAT=?,IPNAT_GW=?,IPHAC_NC=?,IPHAC_NC_GW=?,IPHAC_SFC=?,IPHAC_SFC_GW=?,IPHDC_NC=?,IPHDC_NC_GW=?,IPHDC_SFC=?,IPHDC_SFC_GW=?,"
+														 + "MAX_POWER_INTAKE_601 =?,POWER_FACTOR_LF_601 =?,MAX_SUPPLY_CUR_601 =?,ENERGY_601 =?,DURATION_601 =?,"
+														 + "TIPO_NORMA=? "
+														 + "WHERE ID_STRUMENTO=?";
 		
 		try {
 				con=getConnection();
@@ -2834,8 +2874,42 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				pst.setString(31,sicurezza.getMARCHIATURE());
 				pst.setString(32,sicurezza.getALTRO());
 				pst.setString(33,sicurezza.getPARTI_APPLICATE());
-				
-				pst.setString(34, idStrumento);
+				pst.setString(34,sicurezza.getIDIFF());
+			    pst.setString(35,sicurezza.getIDIFF_GW());
+			    pst.setString(36,sicurezza.getIEA_NC());
+			    pst.setString(37,sicurezza.getIEA_NC_GW());
+			    pst.setString(38,sicurezza.getIEA_SFC());
+			    pst.setString(39,sicurezza.getIEA_SFC_GW());
+			    pst.setString(40,sicurezza.getIG_NC());
+			    pst.setString(41,sicurezza.getIG_NC_GW());
+			    pst.setString(42,sicurezza.getIG_SFC());
+			    pst.setString(43,sicurezza.getIG_SFC_GW());
+			    pst.setString(44,sicurezza.getIPAAC_NC());
+			    pst.setString(45,sicurezza.getIPAAC_NC_GW());
+			    pst.setString(46,sicurezza.getIPAAC_SFC());
+			    pst.setString(47,sicurezza.getIPAAC_SFC_GW());
+			    pst.setString(48,sicurezza.getIPADC_NC());
+			    pst.setString(49,sicurezza.getIPADC_NC_GW());
+			    pst.setString(50,sicurezza.getIPADC_SFC());
+			    pst.setString(51,sicurezza.getIPADC_SFC_GW());
+			    pst.setString(52,sicurezza.getIPNAT());
+			    pst.setString(53,sicurezza.getIPNAT_GW());
+			    pst.setString(54,sicurezza.getIPHAC_NC());
+			    pst.setString(55,sicurezza.getIPHAC_NC_GW());
+			    pst.setString(56,sicurezza.getIPHAC_SFC());
+			    pst.setString(57,sicurezza.getIPHAC_SFC_GW());
+			    pst.setString(58,sicurezza.getIPHDC_NC());
+			    pst.setString(59,sicurezza.getIPHDC_NC_GW());
+			    pst.setString(60,sicurezza.getIPHDC_SFC());
+			    pst.setString(61,sicurezza.getIPHDC_SFC_GW());
+			    pst.setString(62,sicurezza.getMAX_POWER_INTAKE_601());
+			    pst.setString(63,sicurezza.getPOWER_FACTOR_LF_601());
+			    pst.setString(64,sicurezza.getMAX_SUPPLY_CUR_601());
+			    pst.setString(65,sicurezza.getENERGY_601());
+			    pst.setString(66,sicurezza.getDURATION_601());
+				pst.setString(67, sicurezza.getTIPO_NORMA());
+			  
+				pst.setString(68, idStrumento);
 				
 				pst.execute();
 				
