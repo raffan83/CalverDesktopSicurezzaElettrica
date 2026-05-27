@@ -381,7 +381,7 @@ public class SQLiteDAO {
 
 		try{
 			con=getConnection();
-			pst=con.prepareStatement("INSERT INTO tblMisuraSicurezzaElettrica(id_strumento,data,stato,cond_prot,involucro,fusibili,connettori,marchiature,altro) VALUES(?,?,?,'OK','OK','OK','OK','OK','OK')",pst.RETURN_GENERATED_KEYS);
+			pst=con.prepareStatement("INSERT INTO tblMisuraSicurezzaElettrica(id_strumento,data,stato,cond_prot,involucro,fusibili,connettori,marchiature,altro) VALUES(?,?,?,'OK','OK','OK','OK','OK','N/A')",pst.RETURN_GENERATED_KEYS);
 			
 			pst.setInt(1,Integer.parseInt(id));
 			SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

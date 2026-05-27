@@ -72,6 +72,7 @@ import it.calverDesktopSE.dto.TipoStrumentoDTO;
 import it.calverDesktopSE.utl.Costanti;
 import it.calverDesktopSE.utl.Utility;
 import net.miginfocom.swing.MigLayout;
+import javax.swing.DefaultComboBoxModel;
 
 
 public class PannelloMisuraMaster extends JPanel  implements ChangeListener 
@@ -131,6 +132,8 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 	JComboBox<ClassificazioneDTO> comboBox_classificazione;
 	JComboBox<TipoStrumentoDTO> comboBox_tipo_strumento;
 	JComboBox<LuogoVerificaDTO> comboBox_luogoVerifica;
+	JComboBox comboBoxProtectionType;
+	JComboBox comboBoxPartiApplicate;
 
 	ArrayList<SicurezzaElettricaDTO>listaSicurezza=null;
 	
@@ -145,12 +148,10 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 	JFrame f;
 	
 	ModelTabella model;
-	private JTextField textField_classe;
 	private JTextField textField_data_ora;
 	private JTextField textField_ID_PROVA;
-	private JTextField textField_pa;
 	private JTextField textField_altro;
-	
+	private JLabel lblPartiApplicate;
 
 	public PannelloMisuraMaster(String id) throws Exception
 	{
@@ -166,8 +167,9 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 
 		JPanel masterPanel = new JPanel();
 		
-		masterPanel.setLayout(new MigLayout("", "[70%][20%][10%]", "[12%][73%][15%]"));
+		masterPanel.setLayout(new MigLayout("", "[70%][20%][10%]", "[12%][73%,grow][15%,grow]"));
 
+		
 
 		
 		panel_controllo_visuale=costruisciPanelVisuale();
@@ -210,15 +212,20 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		
 		JPanel pannello= new JPanel();
 		
+		try {
 		pannello.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Condizioni visive", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannello.setBackground(Color.WHITE);
-		pannello.setLayout(new MigLayout("", "[][grow][50px:n][][50:pref:pref,grow]", "[grow][35px][35][35][35][35][35][grow]"));
+		pannello.setLayout(new MigLayout("", "[100px:500px:500px][100px:n][][50:pref:pref,grow]", "[grow][35px][35][35][35][35][35][grow]"));
 		
-		JLabel lblConduzioneDiProtezione = new JLabel("Conduttore di protezione (solo classe I)");
+		JLabel lblConduzioneDiProtezione = new JLabel("Integrità del conduttore di protezione (solo per apparecchiature in classe I)");
 		lblConduzioneDiProtezione.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblConduzioneDiProtezione, "cell 0 1,width : 150:");
 		
-		 slider_1 = new JSlider();
+		
+		SicurezzaElettricaDTO sicurezza = GestioneMisuraBO.getMisuraSicurezza(SessionBO.idStrumento);
+		
+		
+		slider_1 = new JSlider();
 		slider_1.setPaintLabels(true);
 		
 		slider_1.setPaintTicks(true);
@@ -249,9 +256,9 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 	  
 	        slider_1.setLabelTable(labels);
 	        
-	        pannello.add(slider_1, "cell 3 1,width : 120:,alignx center");
+	        pannello.add(slider_1, "cell 2 1,width : 120:,alignx center");
 		
-		JLabel lblInvolucroEParti = new JLabel("Involucro e parti meccaniche");
+		JLabel lblInvolucroEParti = new JLabel("Integrità involucro e parti meccaniche");
 		lblInvolucroEParti.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblInvolucroEParti, "cell 0 2");
 		
@@ -262,9 +269,9 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		slider_2.setMinorTickSpacing(1);
 		slider_2.setMaximum(2);
 		slider_2.setBackground(Color.WHITE);
-		pannello.add(slider_2, "cell 3 2,width :120:,alignx center");
+		pannello.add(slider_2, "cell 2 2,width :120:,alignx center");
 		
-		JLabel lblPartiIsolanti = new JLabel("Parti isolanti / Fusibili");
+		JLabel lblPartiIsolanti = new JLabel("Integrità parti isolanti");
 		lblPartiIsolanti.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblPartiIsolanti, "cell 0 3");
 		
@@ -275,9 +282,9 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		slider_3.setMinorTickSpacing(1);
 		slider_3.setMaximum(2);
 		slider_3.setBackground(Color.WHITE);
-		pannello.add(slider_3, "cell 3 3,width : 120:,alignx center");
+		pannello.add(slider_3, "cell 2 3,width : 120:,alignx center");
 		
-		JLabel lblConnettoriEPrese = new JLabel("Connettori e prese");
+		JLabel lblConnettoriEPrese = new JLabel("Integrità connettori e prese");
 		lblConnettoriEPrese.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblConnettoriEPrese, "cell 0 4");
 		
@@ -288,9 +295,9 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		slider_4.setMinorTickSpacing(1);
 		slider_4.setMaximum(2);
 		slider_4.setBackground(Color.WHITE);
-		pannello.add(slider_4, "cell 3 4,width : 120:,alignx center");
+		pannello.add(slider_4, "cell 2 4,width : 120:,alignx center");
 		
-		JLabel lblMarchiature = new JLabel("Marchiature");
+		JLabel lblMarchiature = new JLabel("Leggibilità e completezza delle marcature ed etichette di sicurezza");
 		lblMarchiature.setFont(new Font("Arial", Font.BOLD, 12));
 		pannello.add(lblMarchiature, "cell 0 5");
 		
@@ -301,31 +308,31 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		slider_5.setMinorTickSpacing(1);
 		slider_5.setMaximum(2);
 		slider_5.setBackground(Color.WHITE);
-		pannello.add(slider_5, "cell 3 5,width : 120:,alignx center");
+		pannello.add(slider_5, "cell 2 5,width : 120:,alignx center");
 		
-		JLabel lblAltro = new JLabel("Altro");
+		JLabel lblAltro = new JLabel("Altro (specificare)");
 		lblAltro.setFont(new Font("Arial", Font.BOLD, 12));
-		pannello.add(lblAltro, "cell 0 6,alignx left");
-		
-		textField_altro = new JTextField();
-		textField_altro.setFont(new Font("Arial", Font.PLAIN, 12));
-		pannello.add(textField_altro, "cell 1 6,growx");
-		textField_altro.setColumns(10);
+		pannello.add(lblAltro, "flowx,cell 0 6,alignx left");
 		
 		slider_6 = new JSlider();
-		slider_6.setValue(1);
+		slider_6.setValue(2);
 		slider_6.setPaintTicks(true);
 		slider_6.setPaintLabels(true);
 		slider_6.setMinorTickSpacing(1);
 		slider_6.setMaximum(2);
 		slider_6.setBackground(Color.WHITE);
-		pannello.add(slider_6, "cell 3 6,width : 120:,alignx center");
+		pannello.add(slider_6, "cell 2 6,width : 120:,alignx center");
 		
 		JButton btnSalva_1 = new JButton("Salva");
 		
 		btnSalva_1.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/save.png")));
 		btnSalva_1.setFont(new Font("Arial", Font.BOLD, 14));
-		pannello.add(btnSalva_1, "cell 0 7 4 1,alignx center");
+		pannello.add(btnSalva_1, "cell 0 7 3 1,alignx center");
+		
+		textField_altro = new JTextField();
+		textField_altro.setFont(new Font("Arial", Font.PLAIN, 12));
+		pannello.add(textField_altro, "cell 0 6,growx");
+		textField_altro.setColumns(10);
 		
 		slider_2.setLabelTable(labels);
 		slider_3.setLabelTable(labels);
@@ -432,7 +439,10 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 			}
 		});
 		
-		
+		} catch (SQLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		
 		return pannello;
 	}
@@ -545,7 +555,7 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		JPanel panel_tabella = new JPanel();
 		panel_tabella.setBorder(new TitledBorder(new LineBorder(new Color(215, 23, 29), 2, true), "Tabella Misura", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(215, 23, 29)));
 		panel_tabella.setBackground(Color.WHITE);
-		panel_tabella.setLayout(new MigLayout("", "[grow][grow]", "[][][grow]"));
+		panel_tabella.setLayout(new MigLayout("", "[][grow][][][200px:200px:200px,grow]", "[][][]"));
 
 		tabellaSecurTest = new JTable();
 		tabellaSecurTest.setDefaultRenderer(Object.class, new MyCellRenderer());
@@ -556,67 +566,100 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 		
 		model = new ModelTabella();
 		
-		JLabel lblNewLabel_1 = new JLabel("Data Ora Misura");
+		JLabel lblIdProva = new JLabel("ID PROVA");
+		lblIdProva.setFont(new Font("Arial", Font.BOLD, 14));
+		panel_tabella.add(lblIdProva, "cell 0 0");
+		
+		JLabel lblNewLabel_1 = new JLabel("Data / Ora Misura");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 16));
-		panel_tabella.add(lblNewLabel_1, "flowx,cell 1 0");
+		panel_tabella.add(lblNewLabel_1, "cell 3 0");
 		
 		textField_data_ora = new JTextField();
 		textField_data_ora.setHorizontalAlignment(SwingConstants.RIGHT);
 		textField_data_ora.setFont(new Font("Arial", Font.PLAIN, 14));
 		textField_data_ora.setEditable(false);
-		panel_tabella.add(textField_data_ora, "cell 1 0,width :150:");
+		panel_tabella.add(textField_data_ora, "cell 4 0,width :150:");
 		textField_data_ora.setColumns(10);
-		
-		JLabel lblIdProva = new JLabel("ID PROVA");
-		lblIdProva.setFont(new Font("Arial", Font.BOLD, 14));
-		panel_tabella.add(lblIdProva, "flowx,cell 0 0");
 		
 		textField_ID_PROVA = new JTextField();
 		textField_ID_PROVA.setFont(new Font("Arial", Font.PLAIN, 14));
 		textField_ID_PROVA.setEditable(false);
-		panel_tabella.add(textField_ID_PROVA, "cell 0 0,width : 150:");
+		panel_tabella.add(textField_ID_PROVA, "cell 1 0,width : 350:350");
 		textField_ID_PROVA.setColumns(10);
 		
 		tabellaSecurTest.setModel(model);
 		TableColumn column = tabellaSecurTest.getColumnModel().getColumn(tabellaSecurTest.getColumnModel().getColumnIndex("Misurazione"));
 		column.setPreferredWidth(300);
 		
-		JLabel lblClasse = new JLabel("Classe");
+		JLabel lblClasse = new JLabel("Classe Protezione");
 		lblClasse.setFont(new Font("Arial", Font.BOLD, 16));
 		panel_tabella.add(lblClasse, "cell 0 1");
 		
-		textField_classe = new JTextField();
-		textField_classe.setFont(new Font("Arial", Font.PLAIN, 14));
-		panel_tabella.add(textField_classe, "flowx,cell 0 1,width : 300:");
-		textField_classe.setColumns(10);
+		lblPartiApplicate = new JLabel("Temp Text");
+		lblPartiApplicate.setFont(new Font("Arial", Font.BOLD, 16));
+		panel_tabella.add(lblPartiApplicate, "cell 3 1");
 		
 	
 		
 		JScrollPane scroll = new JScrollPane(tabellaSecurTest);
-		panel_tabella.add(scroll,"cell 0 2 2 1,grow");
+		panel_tabella.add(scroll,"cell 0 2 5 1,grow");
 		
-		JLabel lblPartiApplicate = new JLabel("Parti Applicate");
-		lblPartiApplicate.setFont(new Font("Arial", Font.BOLD, 16));
-		panel_tabella.add(lblPartiApplicate, "cell 1 1");
 		
-		textField_pa = new JTextField();
-		textField_pa.setFont(new Font("Arial", Font.PLAIN, 14));
-		panel_tabella.add(textField_pa, "cell 1 1,width : 300:");
-		textField_pa.setColumns(10);
 		
 		try 
 		{
 		SicurezzaElettricaDTO sicurezza = GestioneMisuraBO.getMisuraSicurezza(SessionBO.idStrumento);
 		
+		lblPartiApplicate.setText("Parti Applicate");
+		
+		comboBoxProtectionType = new JComboBox();
+		comboBoxProtectionType.setFont(new Font("Arial", Font.BOLD, 14));
+		comboBoxProtectionType.setModel(new DefaultComboBoxModel(new String[] {"Seleziona", "I", "II", "III"}));
+		panel_tabella.add(comboBoxProtectionType, "cell 1 1");
+		
+		comboBoxPartiApplicate = new JComboBox();
+		comboBoxPartiApplicate.setFont(new Font("Arial", Font.BOLD, 14));
+		comboBoxPartiApplicate.setModel(new DefaultComboBoxModel(new String[] {"Seleziona", "B", "BF", "CF", "F"}));
+		panel_tabella.add(comboBoxPartiApplicate, "cell 4 1");
+		
 		if(sicurezza!=null && sicurezza.getID_PROVA()!=null) 
 		{
 			textField_ID_PROVA.setText(sicurezza.getID_PROVA());
-			textField_classe.setText(sicurezza.getSK());
-			textField_pa.setText(sicurezza.getPARTI_APPLICATE());
-			textField_data_ora.setText(sicurezza.getDATA());
+			
+			
+			if(sicurezza.getSK()!=null && sicurezza.getSK().length()>0) 
+			{
+				comboBoxProtectionType.setSelectedIndex(Integer.parseInt(sicurezza.getSK()));
+			}
+			
+			if(sicurezza.getPARTI_APPLICATE()!=null) 
+			{
+				comboBoxPartiApplicate.setSelectedItem(sicurezza.getPARTI_APPLICATE());
+			}
+			
+			textField_data_ora.setText(sicurezza.getDATA() + " / " +sicurezza.getORA());
+			
+			if (!sicurezza.getTIPO_NORMA().equals("62353")) 
+			{
+				lblPartiApplicate.setVisible(false);
+				comboBoxPartiApplicate.setVisible(false);
+			}
+			else 
+			{
+				lblPartiApplicate.setVisible(true);
+				comboBoxPartiApplicate.setVisible(true);
+			}
+			
 			riempiModel(sicurezza);
 			
+			
+			
+			
+		}else 
+		{
+			lblPartiApplicate.setVisible(false);
+			comboBoxPartiApplicate.setVisible(false);
 		}
 		
 		}
@@ -645,69 +688,71 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 			model.removeRow(0);
 		}
 		
-			if (sicurezza.getTIPO_NORMA().equals("62535")) {
+			if (sicurezza.getTIPO_NORMA().equals("62353")) {
+			
+			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore Resistenza Conduttore di protezione", 0, 0);
+			model.setValueAt("Continuità conduttore di protezione", 0, 0);
 			model.setValueAt(toString(sicurezza.getR_SL()), 0, 1);
 			model.setValueAt(toString(sicurezza.getR_SL_GW()), 0, 2);
 			model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore Resistenza di isolamento", 1, 0);
+			model.setValueAt("Resistenza d'isolamento", 1, 0);
 			model.setValueAt(toString(sicurezza.getR_ISO()), 1, 1);
 			model.setValueAt(toString(sicurezza.getR_ISO_GW()), 1, 2);
 			model.setValueAt(returnEsit(sicurezza.getR_ISO(),sicurezza.getR_ISO_GW(),1), 1, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore tensione di verifica Resistenza di isolamento",2, 0);
+			model.setValueAt("Tensione di verifica",2, 0);
 			model.setValueAt(toString(sicurezza.getU_ISO()), 2, 1);
 			model.setValueAt(toString(sicurezza.getU_ISO_GW()), 2, 2);
 			model.setValueAt(returnEsit(sicurezza.getU_ISO(),sicurezza.getU_ISO_GW(),1), 2, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente differenziale tra L e N", 3, 0);
-			model.setValueAt(toString(sicurezza.getI_DIFF()), 3, 1);
-			model.setValueAt(toString(sicurezza.getI_DIFF_GW()), 3, 2);
-			model.setValueAt(returnEsit(sicurezza.getI_DIFF(),sicurezza.getI_DIFF_GW(),0), 3, 3);
+			model.setValueAt("Corrente dispersione nell'apparecchio (Metodo Alternativo)", 3, 0);
+			model.setValueAt(toString(sicurezza.getI_EGA()), 3, 1);
+			model.setValueAt(toString(sicurezza.getI_EGA_GW()), 3, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_EGA(),sicurezza.getI_EGA_GW(),0), 3, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente dispersione involucro", 4, 0);
-			model.setValueAt(toString(sicurezza.getI_EGA()), 4, 1);
-			model.setValueAt(toString(sicurezza.getI_EGA_GW()), 4, 2);
-			model.setValueAt(returnEsit(sicurezza.getI_EGA(),sicurezza.getI_EGA_GW(),0), 4, 3);
+			model.setValueAt("Conduttore dispersione apparecchio (Metodo Differenziale) ", 4, 0);
+			model.setValueAt(toString(sicurezza.getI_DIFF()), 4, 1);
+			model.setValueAt(toString(sicurezza.getI_DIFF_GW()), 4, 2);
+			model.setValueAt(returnEsit(sicurezza.getI_DIFF(),sicurezza.getI_DIFF_GW(),0), 4, 3);
 			
 			
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente dispersione parte applicata", 5, 0);
+			model.setValueAt("Conduttore dispersione apparecchio (Metodo Diretto)", 5, 0);
 			model.setValueAt(toString(sicurezza.getI_EPA()), 5, 1);
 			model.setValueAt(toString(sicurezza.getI_EPA_GW()), 5, 2);
 			model.setValueAt(returnEsit(sicurezza.getI_EPA(),sicurezza.getI_EPA_GW(),0), 5, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (in funzione)", 6, 0);
+			model.setValueAt("Corrente di contatto", 6, 0);
 			model.setValueAt(toString(sicurezza.getI_GA()), 6, 1);
 			model.setValueAt(toString(sicurezza.getI_GA_GW()), 6, 2);
 			model.setValueAt(returnEsit(sicurezza.getI_GA(),sicurezza.getI_GA_GW(),0), 6, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente AC dispersione involucro metodo diretto (rete invertita)", 7, 0);
+			model.setValueAt("Corrente di dispersione sulle parti applicate ", 7, 0);
 			model.setValueAt(toString(sicurezza.getI_GA_SFC()), 7, 1);
 			model.setValueAt(toString(sicurezza.getI_GA_SFC_GW()), 7, 2);
 			model.setValueAt(returnEsit(sicurezza.getI_GA_SFC(),sicurezza.getI_GA_SFC_GW(),0), 7, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente AC dispersione parte applicata (in funzione)", 8, 0);
+			model.setValueAt("Corrente dispersione paziente AC ", 8, 0);
 			model.setValueAt(toString(sicurezza.getI_PA_AC()), 8, 1);
 			model.setValueAt(toString(sicurezza.getI_PA_AC_GW()), 8, 2);
 			model.setValueAt(returnEsit(sicurezza.getI_PA_AC(),sicurezza.getI_PA_AC_GW(),0), 8, 3);
 			
 			model.addRow(new Object[0]);
-			model.setValueAt("Valore corrente DC dispersione parte applicata (in funzione)", 9, 0);
+			model.setValueAt("Corrente dispersione paziente DC ", 9, 0);
 			model.setValueAt(toString(sicurezza.getI_PA_DC()), 9, 1);
 			model.setValueAt(toString(sicurezza.getI_PA_DC_GW()), 9, 2);
 			model.setValueAt(returnEsit(sicurezza.getI_PA_DC(),sicurezza.getI_PA_DC_GW(),0), 9, 3);
-			
+			/*
 			model.addRow(new Object[0]);
 			model.setValueAt("Tensione di verifica", 10, 0);
 			model.setValueAt(toString(sicurezza.getPSPG()), 10, 1);
@@ -719,10 +764,60 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 			model.setValueAt(toString(sicurezza.getUBEZ_GW()), 11, 1);
 			model.setValueAt("-", 11, 2);
 			model.setValueAt("-", 11, 3);
-			
+			*/
 			}
-			else 
+			else if(sicurezza.getTIPO_NORMA().equals("61010"))
 			{
+				model.addRow(new Object[0]);
+				model.setValueAt("Continuità conduttore di protezione", 0, 0);
+				model.setValueAt(toString(sicurezza.getR_SL()), 0, 1);
+				model.setValueAt(toString(sicurezza.getR_SL_GW()), 0, 2);
+				model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente differenziale", 1, 0);
+				model.setValueAt(toString(sicurezza.getI_DIFF()), 1, 1);
+				model.setValueAt(toString(sicurezza.getI_DIFF_GW()), 1, 2);
+				model.setValueAt(returnEsit(sicurezza.getI_DIFF(),sicurezza.getI_DIFF_GW(),0), 1, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Corrente di dispersione sull'involucro", 2, 0);
+				model.setValueAt(toString(sicurezza.getI_GA()), 2, 1);
+				model.setValueAt(toString(sicurezza.getI_GA_GW()), 2, 2);
+				model.setValueAt(returnEsit(sicurezza.getI_GA(),sicurezza.getI_GA_GW(),0), 2, 3);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Condizione di guasto singolo della corrente di dispersione sull'involucro", 3, 0);
+				model.setValueAt(toString(sicurezza.getI_GA_SFC()), 3, 1);
+				model.setValueAt(toString(sicurezza.getI_GA_SFC_GW()), 3, 2);
+				model.setValueAt(returnEsit(sicurezza.getI_GA_SFC(),sicurezza.getI_GA_SFC_GW(),0), 3, 3);
+			/*	
+				model.addRow(new Object[0]);
+				model.setValueAt("Massima potenza assorbita  PMAX [W]", 4, 0);
+				model.setValueAt(toString(sicurezza.getMAX_POWER_INTAKE_601()), 4, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Fattore di potenza LF", 5, 0);
+				model.setValueAt(toString(sicurezza.getPOWER_FACTOR_LF_601()), 5, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Massima corrente di alimentazione  IMAX [A]", 6, 0);
+				model.setValueAt(toString(sicurezza.getMAX_SUPPLY_CUR_601()), 6, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Energia  [kWh]", 7, 0);
+				model.setValueAt(toString(sicurezza.getENERGY_601()), 7, 1);
+				
+				model.addRow(new Object[0]);
+				model.setValueAt("Durata della misurazione [hh:mm:ss]", 8, 0);
+				model.setValueAt(toString(sicurezza.getDURATION_601()), 8, 1);
+				
+				*/
+			}
+			
+			else
+			{
+				lblPartiApplicate.setText("Parti Applicate");
 				model.addRow(new Object[0]);
 				model.setValueAt("Continuità conduttore di protezione ", 0, 0);
 				model.setValueAt(toString(sicurezza.getR_SL()), 0, 1);
@@ -730,13 +825,13 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 				model.setValueAt(returnEsit(sicurezza.getR_SL(),sicurezza.getR_SL_GW(),0), 0, 3);
 				
 				model.addRow(new Object[0]);
-				model.setValueAt("Resistenza di isolamento", 1, 0);
+				model.setValueAt("Resistenza d'isolamento", 1, 0);
 				model.setValueAt(toString(sicurezza.getR_ISO()), 1, 1);
 				model.setValueAt(toString(sicurezza.getR_ISO_GW()), 1, 2);
 				model.setValueAt(returnEsit(sicurezza.getR_ISO(),sicurezza.getR_ISO_GW(),1), 1, 3);
 				
 				model.addRow(new Object[0]);
-				model.setValueAt("Corrente differenziale",2, 0);
+				model.setValueAt("Tensione di verifica",2, 0);
 				model.setValueAt(toString(sicurezza.getIDIFF()), 2, 1);
 				model.setValueAt(toString(sicurezza.getIDIFF_GW()), 2, 2);
 				model.setValueAt(returnEsit(sicurezza.getIDIFF(),sicurezza.getIDIFF_GW(),1), 2, 3);
@@ -1454,31 +1549,65 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 
 			{
 
+				try {
+			
+				SicurezzaElettricaDTO sicurezza = GestioneMisuraBO.getMisuraSicurezza(SessionBO.idStrumento);
+			
+				
 				int scelta=	JOptionPane.showConfirmDialog(null,"Vuoi terminare la misura ?","Salvataggio",JOptionPane.YES_NO_OPTION,0,new ImageIcon(PannelloTOP.class.getResource("/image/question.png")));
 
 				if(scelta==0)
 				{
-
-					if(true)
+					
+					if(sicurezza.getTIPO_NORMA().equals("62353")) 
 					{
-						try 
+						/*CASO 62353*/
+						String error="";
+						
+						if(comboBoxProtectionType.getSelectedIndex()==0) 
 						{
-							GestioneMisuraBO.terminaMisura(SessionBO.idStrumento,textField_classe.getText(),textField_pa.getText());
+							error= "- classe di protezione";
+						}
+						
+						if(comboBoxPartiApplicate.getSelectedIndex()==0 ) 
+						{
+							error =error+"\n- parti applicate";
+						}
+						
+						if (error.length()>0) 
+						{
+							JOptionPane.showMessageDialog(null,"Non hai indicato \n"+error,"Attenzione",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/question.png")));
+						}else 
+						{
+							GestioneMisuraBO.terminaMisura(SessionBO.idStrumento,""+comboBoxProtectionType.getSelectedIndex(),comboBoxPartiApplicate.getSelectedItem().toString());
 							
 
 							JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
-
-
-							
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
 						
-
-					}else
+						
+					}else 
 					{
-						JOptionPane.showMessageDialog(null,"Per terminare la misura, tutti i punti devono essere valorizzati","Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						/*CASO 61010*/
+						
+						if(comboBoxProtectionType.getSelectedIndex()==0) 
+						{
+							JOptionPane.showMessageDialog(null,"Non hai indicato la classe di protezione.","Attenzione",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/question.png")));
+						   
+							return;
+						}
+						
+						GestioneMisuraBO.terminaMisura(SessionBO.idStrumento,""+comboBoxProtectionType.getSelectedIndex(),"");
+						
+
+						JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 					}
+
+				}
+				
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 
 			}
@@ -1598,6 +1727,18 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 					{			
 						SicurezzaElettricaDTO sicurezza=listaSicurezza.get(Integer.parseInt(id));
 						
+						if(!sicurezza.getTIPO_NORMA().equals("62353")) 
+						{
+							comboBoxPartiApplicate.setVisible(false);
+							lblPartiApplicate.setVisible(false);
+						}
+						else
+						{
+							comboBoxPartiApplicate.setVisible(true);
+							lblPartiApplicate.setVisible(true);
+						}
+						
+						
 						if(slider_1.getValue()==0) 
 						{
 							sicurezza.setCOND_PROT("KO");
@@ -1651,12 +1792,12 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 						GestioneMisuraBO.updateMisuraSicurezzaElettrica(SessionBO.idStrumento,sicurezza);
 						
 						textField_ID_PROVA.setText(sicurezza.getID_PROVA());
-						textField_classe.setText(sicurezza.getSK());
-						textField_pa.setText(sicurezza.getPARTI_APPLICATE());
-						textField_data_ora.setText(sicurezza.getDATA()+" - "+sicurezza.getORA());
+					//	comboBoxProtectionType.setSelectedIndex(Integer.parseInt(sicurezza.getSK()));
+					//	comboBoxPartiApplicate.setSelectedItem(sicurezza.getPARTI_APPLICATE());
+						textField_data_ora.setText(sicurezza.getDATA()+" /  "+sicurezza.getORA());
 						riempiModel(sicurezza);
 						tabellaSecurTest.repaint();
-						
+
 						f.dispose();
 						
 					}
@@ -2125,7 +2266,7 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 				Integer.parseInt(porta);
 				Integer.parseInt(delay);
 				   
-				listaSicurezza= SerialSicurezzaElettrica.listaSicurezzaElettrica(porta, delay);
+				listaSicurezza= SerialSicurezzaElettrica.getListaSicurezzaElettrica(porta, delay);
 				
 				if(listaSicurezza==null) 
 				{
@@ -2141,7 +2282,12 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 					if(sicurezza.getTIPO_NORMA().equals("601")) 
 					{
 						norma= "601";
-					}else 
+					}
+					else if(sicurezza.getTIPO_NORMA().equals("61010"))
+					{
+						norma= "61010";
+					}
+					else
 					{
 						norma="62353";
 					}
@@ -2170,6 +2316,13 @@ public class PannelloMisuraMaster extends JPanel  implements ChangeListener
 			catch (NumberFormatException e) {
 				JOptionPane.showMessageDialog(null,"I campi porta e delay devono assumere valori numerici","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 				spl.close();
+			}
+			catch (jssc.SerialPortException jsscEx) {
+				JOptionPane.showMessageDialog(null,"Impossibile connettersi al dispositivo, controllare porta COM e riprovare","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+					jsscEx.printStackTrace();
+					spl.close();
+					
+				
 			}
 			catch (Exception e) {
 				e.printStackTrace();

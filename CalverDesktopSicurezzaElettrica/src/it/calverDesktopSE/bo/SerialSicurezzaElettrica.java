@@ -9,7 +9,7 @@ import jssc.SerialPortList;
 
 public class SerialSicurezzaElettrica {
 
-public static ArrayList<SicurezzaElettricaDTO> listaSicurezzaElettrica(String com,String delay) throws SerialPortException {
+public static ArrayList<SicurezzaElettricaDTO> getListaSicurezzaElettrica(String com,String delay) throws SerialPortException {
 
         SerialPort serialPort = new SerialPort("COM"+com);
         
@@ -60,7 +60,7 @@ private static ArrayList<SicurezzaElettricaDTO> goTo(String totalLine) {
 	
 	String[] tmp =totalLine.split("\n");
 	String[] playLoad =tmp[2].split("S.T.I.");
-	String[] energ =tmp[1].substring(2,tmp[1].length()).split("\\$24;");
+	String[] energ =tmp[1].substring(2,tmp[1].length()).split("\\$");
 	
 	
 	System.out.println("***  [LETTURA DATI]  ***");
@@ -82,8 +82,9 @@ private static ArrayList<SicurezzaElettricaDTO> goTo(String totalLine) {
 				sicurezza.setTIPO_NORMA("601");
 				
 				
-				sicurezza.setID_PROVA(normalizza(play[2]));
-				sicurezza.setSK(normalizza(play[3]));
+				sicurezza.setID_PROVA(normalizza(play[1]));
+			//	sicurezza.setSK(normalizza(play[3]));
+				sicurezza.setSK("0");
 				sicurezza.setDATA(normalizza(play[4]));
 				sicurezza.setORA(normalizza(play[5]));
 				
@@ -138,13 +139,34 @@ private static ArrayList<SicurezzaElettricaDTO> goTo(String totalLine) {
 				
 				controlloDatiEnergetici(play[74],energ,sicurezza);
 			}
+			else if(tipoProva.indexOf("250300")>0)  
+			{
+				sicurezza.setTIPO_NORMA("61010");
+				
+				sicurezza.setID_PROVA(normalizza(play[1]));
+				//sicurezza.setSK(normalizza(play[3]));
+				sicurezza.setSK("0");
+				sicurezza.setDATA(normalizza(play[4]));
+				sicurezza.setORA(normalizza(play[5]));
+				
+				sicurezza.setR_SL(normalizza(play[6]));
+				sicurezza.setR_SL_GW(normalizza(play[7]));
+				sicurezza.setI_DIFF(normalizza(play[14]));
+				sicurezza.setI_DIFF_GW(normalizza(play[15]));
+				sicurezza.setI_GA(normalizza(play[28]));
+				sicurezza.setI_GA_GW(normalizza(play[29]));
+				sicurezza.setI_GA_SFC(normalizza(play[30]));
+				sicurezza.setI_GA_SFC_GW(normalizza(play[31]));
+				controlloDatiEnergetici(play[74],energ,sicurezza);
+			}
 			else 
 			{
 				
-			sicurezza.setTIPO_NORMA("62535");
+			sicurezza.setTIPO_NORMA("62353");
 			
-			sicurezza.setID_PROVA(normalizza(play[2]));
-			sicurezza.setSK(normalizza(play[3]));
+			sicurezza.setID_PROVA(normalizza(play[1]));
+			//sicurezza.setSK(normalizza(play[3]));
+			sicurezza.setSK("0");
 			sicurezza.setDATA(normalizza(play[4]));
 			sicurezza.setORA(normalizza(play[5]));
 			sicurezza.setR_SL(normalizza(play[6]));
@@ -189,11 +211,18 @@ private static void controlloDatiEnergetici(String identifier, String[] energ, S
 	try {
 		int indiceMisura=Integer.parseInt(identifier.substring(0,4));
 		
-		String dati=energ[indiceMisura-1];
+		int index=indiceMisura-1;
+		
+		String dati=energ[index];
 		
 		if(!dati.equals("")) 
 		{
 			String[] dt=dati.split(";");
+			
+			if(index>0) 
+			{
+				dt=removeIndex(dt, 0);
+			}
 			
 			sicurezza.setMAX_POWER_INTAKE_601(dt[0]);
 			sicurezza.setPOWER_FACTOR_LF_601(dt[1]);
@@ -216,6 +245,21 @@ private static String normalizza(String string) {
 	string =string.replaceAll("ê", "Ohm");
 	string=string.replaceAll("æ", "µ");
 	return string;
+}
+public static String[] removeIndex(String[] dt, int indexToRemove) {
+    if (dt == null || indexToRemove < 0 || indexToRemove >= dt.length) {
+        return dt; // ritorna l'array originale se indice non valido
+    }
+
+    String[] nuovo = new String[dt.length - 1];
+
+    for (int i = 0, j = 0; i < dt.length; i++) {
+        if (i != indexToRemove) {
+            nuovo[j++] = dt[i];
+        }
+    }
+
+    return nuovo;
 }
 
 }
